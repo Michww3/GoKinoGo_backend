@@ -1,13 +1,12 @@
 ﻿using GoKinoGo.Data;
-using GoKinoGo.DataAccess.Interfaces;
+using GoKinoGo.DataAccess.Repositories.Interfaces;
 using GoKinoGo.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace GoKinoGo.DataAccess;
+namespace GoKinoGo.DataAccess.Repositories;
 
-public class MovieRepository : Repository<Movie>, IMovieRepository
+public class MovieRepository(AppDbContext context) : Repository<Movie>(context), IMovieRepository
 {
-    public MovieRepository(AppDbContext context) : base(context) { }
     public async Task<Movie?> GetFullMovieByIdAsync(int movieId)
     {
         return await _context.Movies
@@ -15,7 +14,8 @@ public class MovieRepository : Repository<Movie>, IMovieRepository
             .Include(m => m.Comments)
             .ThenInclude(c => c.Owner)
             .Include(m => m.Comments)
-            .ThenInclude(c => c.LikedByUsers)
+            .ThenInclude(c => c.Likes)
+            .ThenInclude(l => l.User)
             .SingleOrDefaultAsync(m => m.Id == movieId);
     }
 

@@ -1,10 +1,10 @@
 ﻿using GoKinoGo.Data;
-using GoKinoGo.DataAccess.Interfaces;
+using GoKinoGo.DataAccess.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.Linq.Expressions;
 
-namespace GoKinoGo.DataAccess;
+namespace GoKinoGo.DataAccess.Repositories;
 
 public class Repository<T> : IRepository<T> where T : class
 {

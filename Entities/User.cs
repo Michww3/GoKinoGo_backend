@@ -8,6 +8,6 @@ public class User
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public ICollection<Comment> Comments { get; set; } = [];
-    public ICollection<Comment> LikedComments { get; set; } = [];
+    public ICollection<Like> Likes { get; set; } = [];
     public UserRole Role { get; set; } = UserRole.Guest;
 }

@@ -1,18 +1,18 @@
 ﻿using GoKinoGo.Data;
-using GoKinoGo.DataAccess.Interfaces;
+using GoKinoGo.DataAccess.Repositories.Interfaces;
 using GoKinoGo.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace GoKinoGo.DataAccess;
+namespace GoKinoGo.DataAccess.Repositories;
 
-public class CommentRepository : Repository<Comment>, ICommentRepository
+public class CommentRepository(AppDbContext context) : Repository<Comment>(context), ICommentRepository
 {
-    public CommentRepository(AppDbContext context) : base(context) { }
     public async Task<IEnumerable<Comment>> GetByMovieIdAsync(int movieId)
     {
         return await _dbSet
             .Include(c => c.Owner)
-            .Include(c => c.LikedByUsers)
+            .Include(c => c.Likes)
+            .ThenInclude(l => l.User)
             .Where(c => c.MovieId == movieId)
             .OrderByDescending(c => c.CreationDate)
             .ToListAsync();
@@ -22,13 +22,14 @@ public class CommentRepository : Repository<Comment>, ICommentRepository
         return await _dbSet
             .Include(c => c.Owner)
             .Include (c => c.Movie)
-            .Include(c => c.LikedByUsers)
+            .Include(c => c.Likes)
+            .ThenInclude(l => l.User)
             .SingleAsync(c => c.Id == commentId);
     }
 
     public async Task<bool> IsLikedByUserAsync(int commentId, int userId)
     {
-        return await _dbSet
-            .AnyAsync(c => c.Id == commentId && c.LikedByUsers.Any(u => u.Id == userId));
+        return await _context.Likes
+            .AnyAsync(l => l.CommentId == commentId && l.UserId == userId);
     }
 }

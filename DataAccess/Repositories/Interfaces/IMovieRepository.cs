@@ -1,6 +1,6 @@
 ﻿using GoKinoGo.Entities;
 
-namespace GoKinoGo.DataAccess.Interfaces;
+namespace GoKinoGo.DataAccess.Repositories.Interfaces;
 
 public interface IMovieRepository : IRepository<Movie>
 {

@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace GoKinoGo.DataAccess.Interfaces;
+namespace GoKinoGo.DataAccess.Repositories.Interfaces;
 
 public interface IRepository<T> where T : class
 {

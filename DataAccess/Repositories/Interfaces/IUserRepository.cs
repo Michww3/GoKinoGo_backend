@@ -1,6 +1,6 @@
 ﻿using GoKinoGo.Entities;
 
-namespace GoKinoGo.DataAccess.Interfaces;
+namespace GoKinoGo.DataAccess.Repositories.Interfaces;
 
 public interface IUserRepository : IRepository<User>
 {
@@ -8,5 +8,5 @@ public interface IUserRepository : IRepository<User>
     Task<User?> GetByUserNameAsync(string userName);
     Task<bool> ExistsByEmailAsync(string email);
     Task<bool> ExistsByUserNameAsync(string userName);
-    Task<User?> GetWithLikedCommentsAsync(int userId);
+    Task<User?> GetWithLikesAsync(int userId);
 }
