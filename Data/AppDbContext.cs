@@ -17,7 +17,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasOne(c => c.Owner)
             .WithMany(u => u.Comments)
             .HasForeignKey(c => c.OwnerId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<Comment>()
             .HasOne(c => c.Movie)
@@ -29,7 +29,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasOne(l => l.User)
             .WithMany(u => u.Likes)
             .HasForeignKey(l => l.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<Like>()
             .HasOne(l => l.Comment)

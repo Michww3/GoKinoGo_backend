@@ -13,6 +13,6 @@ public class UnitOfWork(AppDbContext context) : IUnitOfWork
     public IUserRepository UserRepository { get; } = new UserRepository(context);
     public ICommentRepository CommentRepository { get; } = new CommentRepository(context);
     public IRepository<Genre> GenreRepository { get; } = new Repository<Genre>(context);
-
-    public Task<int> SaveChangesAsync() => _context.SaveChangesAsync();
+    public IRepository<Like> LikeRepository { get; } = new Repository<Like>(context);
+    public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();
 }
