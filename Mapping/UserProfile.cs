@@ -1,0 +1,15 @@
+﻿using AutoMapper;
+using GoKinoGo.DTOs.User;
+using GoKinoGo.Entities;
+
+namespace GoKinoGo.Mapping;
+
+public class UserProfile : Profile
+{
+    public UserProfile()
+    {
+        CreateMap<User, UserDto>();
+        CreateMap<CreateUserDto, User>()
+            .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
+    }
+}
