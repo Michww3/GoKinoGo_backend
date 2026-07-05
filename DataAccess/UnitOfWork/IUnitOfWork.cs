@@ -5,10 +5,10 @@ namespace GoKinoGo.DataAccess.UnitOfWork;
 
 public interface IUnitOfWork
 {
-    IMovieRepository MovieRepository { get; }
-    IUserRepository UserRepository { get; }
-    ICommentRepository CommentRepository { get; }
-    IRepository<Genre> GenreRepository { get; }
-    IRepository<Like> LikeRepository {  get; }
+    IMovieRepository Movies { get; }
+    IUserRepository Users { get; }
+    ICommentRepository Comments { get; }
+    IRepository<Genre> Genres { get; }
+    IRepository<Like> Likes {  get; }
     Task<int> SaveChangesAsync();
 }
