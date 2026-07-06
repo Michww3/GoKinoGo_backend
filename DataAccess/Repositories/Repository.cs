@@ -1,7 +1,6 @@
 ﻿using GoKinoGo.Data;
 using GoKinoGo.DataAccess.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Collections;
 using System.Linq.Expressions;
 
 namespace GoKinoGo.DataAccess.Repositories;

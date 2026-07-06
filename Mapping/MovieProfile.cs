@@ -11,7 +11,7 @@ public class MovieProfile : Profile
         CreateMap<Movie, MovieDto>();
         CreateMap<CreateMovieDto, Movie>()
             .ForMember(dest => dest.Genres, opt => opt.Ignore());
-        CreateMap<UpdateMovieDto,  Movie>()
+        CreateMap<UpdateMovieDto, Movie>()
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
     }
 }

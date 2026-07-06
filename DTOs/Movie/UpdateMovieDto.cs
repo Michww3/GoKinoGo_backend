@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace GoKinoGo.DTOs.Movie;
+﻿namespace GoKinoGo.DTOs.Movie;
 
 public class UpdateMovieDto
 {

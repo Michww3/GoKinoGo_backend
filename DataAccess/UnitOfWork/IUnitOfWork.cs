@@ -9,6 +9,6 @@ public interface IUnitOfWork
     IUserRepository Users { get; }
     ICommentRepository Comments { get; }
     IRepository<Genre> Genres { get; }
-    IRepository<Like> Likes {  get; }
+    ILikeRepository Likes { get; }
     Task<int> SaveChangesAsync();
 }

@@ -1,6 +1,4 @@
-﻿using GoKinoGo.Entities;
-
-namespace GoKinoGo.DTOs.User;
+﻿namespace GoKinoGo.DTOs.User;
 
 public class UserDto
 {

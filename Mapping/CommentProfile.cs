@@ -11,5 +11,6 @@ public class CommentProfile : Profile
         CreateMap<Comment, CommentDto>()
             .ForMember(dest => dest.LikesCount, opt => opt.MapFrom(src => src.Likes.Count))
             .ForMember(dest => dest.IsLikedByCurrentUser, opt => opt.Ignore());
+        CreateMap<CreateCommentDto, Comment>();
     }
 }

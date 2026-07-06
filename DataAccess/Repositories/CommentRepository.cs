@@ -21,7 +21,7 @@ public class CommentRepository(AppDbContext context) : Repository<Comment>(conte
     {
         return await _dbSet
             .Include(c => c.Owner)
-            .Include (c => c.Movie)
+            .Include(c => c.Movie)
             .Include(c => c.Likes)
             .ThenInclude(l => l.User)
             .SingleAsync(c => c.Id == commentId);
