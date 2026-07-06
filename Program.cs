@@ -3,6 +3,7 @@ using GoKinoGo.DataAccess.Repositories;
 using GoKinoGo.DataAccess.Repositories.Interfaces;
 using GoKinoGo.DataAccess.UnitOfWork;
 using GoKinoGo.Mapping;
+using GoKinoGo.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -69,6 +70,8 @@ public static partial class Program
 
         app.UseAuthentication();
         app.UseAuthentication();
+
+        app.UseMiddleware<ExceptionMiddleware>();
 
         await app.RunAsync();
     }
