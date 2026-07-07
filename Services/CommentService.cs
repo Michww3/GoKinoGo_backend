@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GoKinoGo.Constants;
 using GoKinoGo.DataAccess.UnitOfWork;
 using GoKinoGo.DTOs.Comment;
 using GoKinoGo.DTOs.User;
@@ -16,7 +17,7 @@ public class CommentService(IUnitOfWork unitOfWork, IMapper mapper) : ICommentSe
     public async Task<CommentDto> CreateCommentAsync(CreateCommentDto dto, int userId)
     {
         _ = await _unitOfWork.Movies.GetByIdAsync(dto.MovieId)
-            ?? throw new NotFoundException("Movie not found.");
+            ?? throw new NotFoundException(ErrorMessages.Movie.NotFound);
 
         var comment = _mapper.Map<Comment>(dto);
         comment.OwnerId = userId;
@@ -26,7 +27,7 @@ public class CommentService(IUnitOfWork unitOfWork, IMapper mapper) : ICommentSe
         await _unitOfWork.SaveChangesAsync();
 
         var createdComment = await _unitOfWork.Comments.GetWithDetailsByIdAsync(comment.Id)
-            ?? throw new InvalidOperationException("Created comment cannot be loaded.");
+            ?? throw new InvalidOperationException(ErrorMessages.Comment.CannotLoadCreated);
 
         return _mapper.Map<CommentDto>(createdComment);
     }
@@ -34,10 +35,10 @@ public class CommentService(IUnitOfWork unitOfWork, IMapper mapper) : ICommentSe
     public async Task DeleteCommentAsync(int commentId, CurrentUserDto currentUser)
     {
         var comment = await _unitOfWork.Comments.GetByIdAsync(commentId)
-            ?? throw new NotFoundException("Comment not found.");
+            ?? throw new NotFoundException(ErrorMessages.Comment.NotFound);
 
         if (comment.OwnerId != currentUser.Id && currentUser.Role != UserRole.Admin)
-            throw new ForbiddenException("User does not have permission to delete this comment.");
+            throw new ForbiddenException(ErrorMessages.Comment.CannotDeleteOtherComment);
 
         _unitOfWork.Comments.Remove(comment);
         await _unitOfWork.SaveChangesAsync();
@@ -46,7 +47,7 @@ public class CommentService(IUnitOfWork unitOfWork, IMapper mapper) : ICommentSe
     public async Task<CommentDto> GetCommentByIdAsync(int id, int? currentUserId = null)
     {
         var comment = await _unitOfWork.Comments.GetWithDetailsByIdAsync(id)
-            ?? throw new NotFoundException("Comment does not exist.");
+            ?? throw new NotFoundException(ErrorMessages.Comment.NotFound);
 
         var commentDto = _mapper.Map<CommentDto>(comment);
         if (currentUserId.HasValue)
@@ -78,7 +79,7 @@ public class CommentService(IUnitOfWork unitOfWork, IMapper mapper) : ICommentSe
     public async Task<bool> ToggleLikeAsync(int commentId, int userId)
     {
         _ = await _unitOfWork.Comments.GetByIdAsync(commentId)
-            ?? throw new NotFoundException("Comment not found.");
+            ?? throw new NotFoundException(ErrorMessages.Comment.NotFound);
 
         var like = await _unitOfWork.Likes.GetByCommentAndUserAsync(commentId, userId);
 

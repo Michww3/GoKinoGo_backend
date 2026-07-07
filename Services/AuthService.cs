@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GoKinoGo.Constants;
 using GoKinoGo.DataAccess.UnitOfWork;
 using GoKinoGo.DTOs.Auth;
 using GoKinoGo.DTOs.User;
@@ -25,12 +26,12 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<JwtOpt
         var emailExists = await _unitOfWork.Users
             .ExistsByEmailAsync(dto.Email);
         if (emailExists)
-            throw new ConflictException("User with this email already exists.");
+            throw new ConflictException(ErrorMessages.User.EmailExists);
 
         var userNameExists = await _unitOfWork.Users
             .ExistsByUserNameAsync(dto.UserName);
         if (userNameExists)
-            throw new ConflictException("User with this username already exists.");
+            throw new ConflictException(ErrorMessages.User.UserNameExists);
 
         var user = _mapper.Map<User>(dto);
         user.PasswordHash = _passwordHasher.HashPassword(dto.Password);
@@ -48,11 +49,11 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<JwtOpt
     public async Task<AuthResponseDto> LoginAsync(LoginDto dto)
     {
         var user = await _unitOfWork.Users.GetByEmailAsync(dto.Email)
-            ?? throw new UnauthorizedException("Invalid email or password.");
+            ?? throw new UnauthorizedException(ErrorMessages.Auth.InvalidCredentials);
 
         var valid = _passwordHasher.VerifyPassword(dto.Password, user.PasswordHash);
         if (!valid)
-            throw new UnauthorizedException("Invalid email or password.");
+            throw new UnauthorizedException(ErrorMessages.Auth.InvalidCredentials);
 
         return new AuthResponseDto
         {

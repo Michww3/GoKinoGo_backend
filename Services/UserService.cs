@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GoKinoGo.Constants;
 using GoKinoGo.DataAccess.UnitOfWork;
 using GoKinoGo.DTOs.User;
 using GoKinoGo.Entities;
@@ -16,30 +17,30 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasher
     public async Task<UserDto> GetUserByIdAsync(int userId)
     {
         var user = await _unitOfWork.Users.GetByIdAsync(userId)
-            ?? throw new NotFoundException("User not found.");
+            ?? throw new NotFoundException(ErrorMessages.User.NotFound);
         return _mapper.Map<UserDto>(user);
     }
 
     public async Task<UserDto> GetUserByEmailAsync(string email)
     {
         var user = await _unitOfWork.Users.GetByEmailAsync(email)
-            ?? throw new NotFoundException("User not found.");
+            ?? throw new NotFoundException(ErrorMessages.User.NotFound);
         return _mapper.Map<UserDto>(user);
     }
 
     public async Task<UserDto> UpdateUserAsync(int userId, UpdateUserDto dto, CurrentUserDto currentUser)
     {
         var user = await _unitOfWork.Users.GetByIdAsync(userId)
-            ?? throw new NotFoundException("User not found.");
+            ?? throw new NotFoundException(ErrorMessages.User.NotFound);
 
         if (user.Id != currentUser.Id && currentUser.Role != UserRole.Admin)
-            throw new ForbiddenException("User does not have permission to update this user.");
+            throw new ForbiddenException(ErrorMessages.User.CannotUpdateOtherUser);
 
         if (dto.Email != null && dto.Email != user.Email && await _unitOfWork.Users.ExistsByEmailAsync(dto.Email))
-            throw new ConflictException("Email is already in use.");
+            throw new ConflictException(ErrorMessages.User.EmailExists);
 
         if (dto.UserName != null && dto.UserName != user.UserName && await _unitOfWork.Users.ExistsByUserNameAsync(dto.UserName))
-            throw new ConflictException("Username is already in use.");
+            throw new ConflictException(ErrorMessages.User.UserNameExists);
 
         _mapper.Map(dto, user);
 
@@ -54,9 +55,9 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasher
     public async Task DeleteUserAsync(int userId, CurrentUserDto currentUser)
     {
         var user = await _unitOfWork.Users.GetByIdAsync(userId)
-            ?? throw new NotFoundException("User not found.");
+            ?? throw new NotFoundException(ErrorMessages.User.NotFound);
         if (user.Id != currentUser.Id && currentUser.Role != UserRole.Admin)
-            throw new ForbiddenException("User does not have permission to delete this user.");
+            throw new ForbiddenException(ErrorMessages.User.CannotDeleteOtherUser);
 
         _unitOfWork.Users.Remove(user);
         await _unitOfWork.SaveChangesAsync();

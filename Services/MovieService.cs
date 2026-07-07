@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GoKinoGo.Constants;
 using GoKinoGo.DataAccess.UnitOfWork;
 using GoKinoGo.DTOs.Movie;
 using GoKinoGo.Entities;
@@ -21,7 +22,7 @@ public class MovieService(IUnitOfWork unitOfWork, IMapper mapper) : IMovieServic
     public async Task<MovieDto> GetMovieByIdAsync(int movieId)
     {
         var movie = await _unitOfWork.Movies.GetMovieWithGenresByIdAsync(movieId)
-            ?? throw new NotFoundException("Movie not found.");
+            ?? throw new NotFoundException(ErrorMessages.Movie.NotFound);
         return _mapper.Map<MovieDto>(movie);
     }
 
@@ -49,7 +50,7 @@ public class MovieService(IUnitOfWork unitOfWork, IMapper mapper) : IMovieServic
 
             if (genreIds.Count != genres.Count())
             {
-                throw new NotFoundException("One or more genre IDs are not found.");
+                throw new NotFoundException(ErrorMessages.Movie.GenreNotFound);
             }
             foreach (var genre in genres)
             {
@@ -66,7 +67,7 @@ public class MovieService(IUnitOfWork unitOfWork, IMapper mapper) : IMovieServic
     public async Task<MovieDto> UpdateMovieAsync(int movieId, UpdateMovieDto dto)
     {
         var movie = await _unitOfWork.Movies.GetMovieWithGenresByIdAsync(movieId)
-            ?? throw new NotFoundException("Movie not found.");
+            ?? throw new NotFoundException(ErrorMessages.Movie.NotFound);
 
         _mapper.Map(dto, movie);
 
@@ -76,7 +77,7 @@ public class MovieService(IUnitOfWork unitOfWork, IMapper mapper) : IMovieServic
             var genres = await _unitOfWork.Genres.FindAsync(g => genreIds.Contains(g.Id));
             if (genreIds.Count != genres.Count())
             {
-                throw new NotFoundException("One or more genre IDs are not found.");
+                throw new NotFoundException(ErrorMessages.Movie.GenreNotFound);
             }
 
             movie.Genres.Clear();
@@ -94,7 +95,7 @@ public class MovieService(IUnitOfWork unitOfWork, IMapper mapper) : IMovieServic
     public async Task DeleteMovieAsync(int movieId)
     {
         var movie = await _unitOfWork.Movies.GetByIdAsync(movieId)
-            ?? throw new NotFoundException("Movie not found.");
+            ?? throw new NotFoundException(ErrorMessages.Movie.NotFound);
 
         _unitOfWork.Movies.Remove(movie);
         await _unitOfWork.SaveChangesAsync();
