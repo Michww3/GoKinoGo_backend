@@ -13,16 +13,18 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasher
     private readonly IMapper _mapper = mapper;
     private readonly IPasswordHasher _passwordHasher = passwordHasher;
 
-    public async Task<UserDto?> GetUserByIdAsync(int userId)
+    public async Task<UserDto> GetUserByIdAsync(int userId)
     {
-        var user = await _unitOfWork.Users.GetByIdAsync(userId);
-        return user == null ? null : _mapper.Map<UserDto>(user);
+        var user = await _unitOfWork.Users.GetByIdAsync(userId)
+            ?? throw new NotFoundException("User not found.");
+        return _mapper.Map<UserDto>(user);
     }
 
-    public async Task<UserDto?> GetUserByEmailAsync(string email)
+    public async Task<UserDto> GetUserByEmailAsync(string email)
     {
-        var user = await _unitOfWork.Users.GetByEmailAsync(email);
-        return user == null ? null : _mapper.Map<UserDto>(user);
+        var user = await _unitOfWork.Users.GetByEmailAsync(email)
+            ?? throw new NotFoundException("User not found.");
+        return _mapper.Map<UserDto>(user);
     }
 
     public async Task<UserDto> UpdateUserAsync(int userId, UpdateUserDto dto, CurrentUserDto currentUser)

@@ -45,18 +45,14 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<JwtOpt
         };
     }
 
-    public async Task<AuthResponseDto?> LoginAsync(LoginDto dto)
+    public async Task<AuthResponseDto> LoginAsync(LoginDto dto)
     {
-        var user = await _unitOfWork.Users
-            .GetByEmailAsync(dto.Email);
-
-        if (user == null)
-            return null;
+        var user = await _unitOfWork.Users.GetByEmailAsync(dto.Email)
+            ?? throw new UnauthorizedException("Invalid email or password.");
 
         var valid = _passwordHasher.VerifyPassword(dto.Password, user.PasswordHash);
-
         if (!valid)
-            return null;
+            throw new UnauthorizedException("Invalid email or password.");
 
         return new AuthResponseDto
         {

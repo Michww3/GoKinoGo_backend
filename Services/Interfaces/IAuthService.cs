@@ -6,5 +6,5 @@ namespace GoKinoGo.Services.Interfaces;
 public interface IAuthService
 {
     Task<AuthResponseDto> RegisterAsync(CreateUserDto dto);
-    Task<AuthResponseDto?> LoginAsync(LoginDto dto);
+    Task<AuthResponseDto> LoginAsync(LoginDto dto);
 }
