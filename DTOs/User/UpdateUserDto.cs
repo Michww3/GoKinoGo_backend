@@ -4,13 +4,10 @@ namespace GoKinoGo.DTOs.User;
 
 public class UpdateUserDto
 {
-    [Required]
     [StringLength(50, MinimumLength = 2)]
-    public string? Name { get; set; } = string.Empty;
-    [Required]
+    public string? Name { get; set; }
     [StringLength(50, MinimumLength = 2)]
-    public string? UserName { get; set; } = string.Empty;
-    [Required]
+    public string? UserName { get; set; }
     [StringLength(100, MinimumLength = 6)]
     public string? Password { get; set; }
     [Required]

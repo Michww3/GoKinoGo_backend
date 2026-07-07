@@ -43,6 +43,7 @@ public static partial class Program
                                 Encoding.UTF8.GetBytes(jwt.Key))
                     };
             });
+
         builder.Services.AddAuthorization();
 
         builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -56,9 +57,9 @@ public static partial class Program
 
         builder.Services.AddAutoMapper(cfg =>
         {
-            cfg.AddProfile<MovieProfile>();
-            cfg.AddProfile<GenreProfile>();
             cfg.AddProfile<CommentProfile>();
+            cfg.AddProfile<GenreProfile>();
+            cfg.AddProfile<MovieProfile>();
             cfg.AddProfile<UserProfile>();
         });
 
@@ -68,10 +69,10 @@ public static partial class Program
 
         var app = builder.Build();
 
-        app.UseAuthentication();
-        app.UseAuthentication();
-
         app.UseMiddleware<ExceptionMiddleware>();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         await app.RunAsync();
     }

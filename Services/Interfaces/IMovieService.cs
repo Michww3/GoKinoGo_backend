@@ -12,5 +12,5 @@ public interface IMovieService
         string? searchQuery = null);
     Task<MovieDto> CreateMovieAsync(CreateMovieDto dto);
     Task<MovieDto?> UpdateMovieAsync(int movieId, UpdateMovieDto dto);
-    Task<bool> DeleteMovieAsync(int movieId);
+    Task DeleteMovieAsync(int movieId);
 }

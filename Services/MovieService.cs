@@ -2,6 +2,7 @@
 using GoKinoGo.DataAccess.UnitOfWork;
 using GoKinoGo.DTOs.Movie;
 using GoKinoGo.Entities;
+using GoKinoGo.Exceptions;
 using GoKinoGo.Services.Interfaces;
 
 namespace GoKinoGo.Services;
@@ -41,11 +42,13 @@ public class MovieService(IUnitOfWork unitOfWork, IMapper mapper) : IMovieServic
 
         if (dto.GenreIds.Count != 0)
         {
-            var genres = await _unitOfWork.Genres.FindAsync(g => dto.GenreIds.Contains(g.Id));
+            var genreIds = dto.GenreIds.Distinct().ToList();
 
-            if (dto.GenreIds.Count != genres.Count())
+            var genres = await _unitOfWork.Genres.FindAsync(g => genreIds.Contains(g.Id));
+
+            if (genreIds.Count != genres.Count())
             {
-                throw new ArgumentException("One or more genre IDs are invalid.");
+                throw new NotFoundException("One or more genre IDs are not found.");
             }
             foreach (var genre in genres)
             {
@@ -61,16 +64,21 @@ public class MovieService(IUnitOfWork unitOfWork, IMapper mapper) : IMovieServic
 
     public async Task<MovieDto?> UpdateMovieAsync(int movieId, UpdateMovieDto dto)
     {
-        var movie = await _unitOfWork.Movies.GetMovieWithGenresByIdAsync(movieId);
-        if (movie == null)
-            return null;
+        var movie = await _unitOfWork.Movies.GetMovieWithGenresByIdAsync(movieId)
+            ?? throw new NotFoundException("Movie not found.");
 
         _mapper.Map(dto, movie);
 
         if (dto.GenreIds != null)
         {
+            var genreIds = dto.GenreIds.Distinct().ToList();
+            var genres = await _unitOfWork.Genres.FindAsync(g => genreIds.Contains(g.Id));
+            if (genreIds.Count != genres.Count())
+            {
+                throw new NotFoundException("One or more genre IDs are not found.");
+            }
+
             movie.Genres.Clear();
-            var genres = await _unitOfWork.Genres.FindAsync(g => dto.GenreIds.Contains(g.Id));
             foreach (var genre in genres)
             {
                 movie.Genres.Add(genre);
@@ -82,14 +90,12 @@ public class MovieService(IUnitOfWork unitOfWork, IMapper mapper) : IMovieServic
         return _mapper.Map<MovieDto>(movie);
     }
 
-    public async Task<bool> DeleteMovieAsync(int movieId)
+    public async Task DeleteMovieAsync(int movieId)
     {
-        var movie = await _unitOfWork.Movies.GetByIdAsync(movieId);
-        if (movie == null)
-            return false;
+        var movie = await _unitOfWork.Movies.GetByIdAsync(movieId)
+            ?? throw new NotFoundException("Movie not found.");
 
         _unitOfWork.Movies.Remove(movie);
         await _unitOfWork.SaveChangesAsync();
-        return true;
     }
 }

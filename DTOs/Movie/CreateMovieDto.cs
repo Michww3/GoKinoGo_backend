@@ -8,6 +8,7 @@ public class CreateMovieDto
     [StringLength(150, MinimumLength = 1)]
     public string Name { get; set; } = string.Empty;
     [Required]
+    [StringLength(5000, MinimumLength = 1)]
     public string Description { get; set; } = string.Empty;
     [Required]
     public DateTime ReleaseDate { get; set; }
