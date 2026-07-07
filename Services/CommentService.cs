@@ -85,8 +85,6 @@ public class CommentService(IUnitOfWork unitOfWork, IMapper mapper) : ICommentSe
         if (like != null)
         {
             _unitOfWork.Likes.Remove(like);
-            await _unitOfWork.SaveChangesAsync();
-            return false;
         }
         else
         {
@@ -100,6 +98,6 @@ public class CommentService(IUnitOfWork unitOfWork, IMapper mapper) : ICommentSe
         }
 
         await _unitOfWork.SaveChangesAsync();
-        return true;
+        return like == null;
     }
 }
