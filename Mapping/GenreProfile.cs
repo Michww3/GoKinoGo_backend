@@ -10,5 +10,7 @@ public class GenreProfile : Profile
     {
         CreateMap<Genre, GenreDto>();
         CreateMap<CreateGenreDto, Genre>();
+        CreateMap<UpdateGenreDto, Genre>()
+               .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
     }
 }

@@ -2,11 +2,13 @@ using GoKinoGo.Data;
 using GoKinoGo.DataAccess.Repositories;
 using GoKinoGo.DataAccess.Repositories.Interfaces;
 using GoKinoGo.DataAccess.UnitOfWork;
+using GoKinoGo.Entities;
 using GoKinoGo.Mapping;
 using GoKinoGo.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using System.Text;
 
 namespace GoKinoGo;
@@ -54,6 +56,7 @@ public static partial class Program
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<ICommentRepository, CommentRepository>();
         builder.Services.AddScoped<ILikeRepository, LikeRepository>();
+        builder.Services.AddScoped<IRepository<Genre>, Repository<Genre>>();
 
         builder.Services.AddAutoMapper(cfg =>
         {
@@ -66,6 +69,26 @@ public static partial class Program
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        builder.Services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Title = "GoKinoGo",
+                Version = "v1",
+                Description = "API for movie poster application"
+            });
+
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer"
+            });
+
+        });
 
         var app = builder.Build();
 
