@@ -5,6 +5,8 @@ using GoKinoGo.DataAccess.UnitOfWork;
 using GoKinoGo.Entities;
 using GoKinoGo.Mapping;
 using GoKinoGo.Middlewares;
+using GoKinoGo.Services;
+using GoKinoGo.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -58,6 +60,13 @@ public static partial class Program
         builder.Services.AddScoped<ILikeRepository, LikeRepository>();
         builder.Services.AddScoped<IRepository<Genre>, Repository<Genre>>();
 
+        builder.Services.AddScoped<IMovieService, MovieService>();
+        builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<ICommentService, CommentService>();
+        builder.Services.AddScoped<IGenreService, GenreService>();
+        builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+
         builder.Services.AddAutoMapper(cfg =>
         {
             cfg.AddProfile<CommentProfile>();
@@ -68,7 +77,6 @@ public static partial class Program
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
 
         builder.Services.AddSwaggerGen(c =>
         {
@@ -92,10 +100,20 @@ public static partial class Program
 
         var app = builder.Build();
 
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
         app.UseMiddleware<ExceptionMiddleware>();
 
         app.UseAuthentication();
         app.UseAuthorization();
+
+        app.MapControllers();
+
+        app.UseDeveloperExceptionPage();
 
         await app.RunAsync();
     }

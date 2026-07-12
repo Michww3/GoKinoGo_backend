@@ -1,0 +1,39 @@
+﻿using GoKinoGo.DTOs.Auth;
+using GoKinoGo.DTOs.User;
+using GoKinoGo.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+
+namespace GoKinoGo.Controllers;
+
+[Route("api/[controller]")]
+public class AuthController(IAuthService authService) : BaseController
+{
+    private readonly IAuthService _authService = authService;
+
+    /// <summary>
+    /// Register a new user
+    /// </summary>
+    [HttpPost("register")]
+    [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<AuthResponseDto>> Register(CreateUserDto dto)
+    {
+        var result = await _authService.RegisterAsync(dto);
+        return CreatedAtAction(nameof(Register), result);
+    }
+
+    /// <summary>
+    /// Login user and get JWT token
+    /// </summary>
+    [HttpPost("login")]
+    [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<AuthResponseDto>> Login(LoginDto dto)
+    {
+        var result = await _authService.LoginAsync(dto);
+        return Ok(result);
+    }
+
+}

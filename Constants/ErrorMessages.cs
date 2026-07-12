@@ -20,6 +20,7 @@ public static class ErrorMessages
         public const string InvalidCredentials = "Invalid email or password.";
         public const string CannotUpdateOtherUser = "You do not have permission to update this user.";
         public const string CannotDeleteOtherUser = "You do not have permission to delete this user.";
+        public const string Unauthorized = "You must be logged in to perform this action.";
     }
 
     public static class Movie
