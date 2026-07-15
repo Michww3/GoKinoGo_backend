@@ -46,6 +46,16 @@ public static partial class Program
                             new SymmetricSecurityKey(
                                 Encoding.UTF8.GetBytes(jwt.Key))
                     };
+                options.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        Console.WriteLine("JWT ERROR:");
+                        Console.WriteLine(context.Exception.Message);
+
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
         builder.Services.AddAuthorization();
@@ -89,19 +99,25 @@ public static partial class Program
 
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
-                Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
                 Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT",
                 In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = "Bearer"
+                Description = "Введите JWT токен"
             });
 
+            c.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+            {
+                [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+            });
         });
 
         var app = builder.Build();
 
         if (app.Environment.IsDevelopment())
         {
+            app.UseDeveloperExceptionPage();
             app.UseSwagger();
             app.UseSwaggerUI();
         }
@@ -113,7 +129,6 @@ public static partial class Program
 
         app.MapControllers();
 
-        app.UseDeveloperExceptionPage();
 
         await app.RunAsync();
     }

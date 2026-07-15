@@ -13,6 +13,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
+
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.UserName)
+            .IsUnique();
+
+        modelBuilder.Entity<Genre>()
+            .HasIndex(g => g.Name)
+            .IsUnique();
+
         modelBuilder.Entity<Comment>()
             .HasOne(c => c.Owner)
             .WithMany(u => u.Comments)
@@ -24,6 +36,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .WithMany(m => m.Comments)
             .HasForeignKey(c => c.MovieId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Like>()
+            .HasIndex(l => new
+            {
+                l.UserId,
+                l.CommentId
+            })
+            .IsUnique();
 
         modelBuilder.Entity<Like>()
             .HasOne(l => l.User)
