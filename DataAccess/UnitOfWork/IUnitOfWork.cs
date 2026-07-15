@@ -8,7 +8,7 @@ public interface IUnitOfWork
     IMovieRepository Movies { get; }
     IUserRepository Users { get; }
     ICommentRepository Comments { get; }
-    IRepository<Genre> Genres { get; }
+    IGenreRepository Genres { get; }
     ILikeRepository Likes { get; }
     Task<int> SaveChangesAsync();
 }

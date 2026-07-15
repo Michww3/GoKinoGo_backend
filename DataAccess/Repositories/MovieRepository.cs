@@ -9,7 +9,7 @@ public class MovieRepository(AppDbContext context) : Repository<Movie>(context),
 {
     public async Task<Movie?> GetFullMovieByIdAsync(int movieId)
     {
-        return await _context.Movies
+        return await _dbSet
             .Include(m => m.Genres)
             .Include(m => m.Comments)
             .ThenInclude(c => c.Owner)
@@ -35,7 +35,7 @@ public class MovieRepository(AppDbContext context) : Repository<Movie>(context),
 
     public async Task<(IEnumerable<Movie> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize, string? searchQuery = null)
     {
-        var query = _context.Movies
+        var query = _dbSet
                  .Include(m => m.Genres)
                  .AsQueryable();
 

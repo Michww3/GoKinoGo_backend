@@ -9,13 +9,13 @@ public class LikeRepository(AppDbContext context) : Repository<Like>(context), I
 {
     public async Task<Like?> GetByCommentAndUserAsync(int commentId, int userId)
     {
-        return await _context.Likes
+        return await _dbSet
             .SingleOrDefaultAsync(l => l.CommentId == commentId && l.UserId == userId);
     }
 
     public async Task<HashSet<int>> GetLikedCommentIdsAsync(int userId, IEnumerable<int> commentIds)
     {
-        return await _context.Likes
+        return await _dbSet
             .Where(l => l.UserId == userId && commentIds.Contains(l.CommentId))
             .Select(l => l.CommentId)
             .ToHashSetAsync();

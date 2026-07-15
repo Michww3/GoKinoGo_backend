@@ -68,7 +68,7 @@ public static partial class Program
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<ICommentRepository, CommentRepository>();
         builder.Services.AddScoped<ILikeRepository, LikeRepository>();
-        builder.Services.AddScoped<IRepository<Genre>, Repository<Genre>>();
+        builder.Services.AddScoped<IGenreRepository, GenreRepository>();
 
         builder.Services.AddScoped<IMovieService, MovieService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
