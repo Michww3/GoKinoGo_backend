@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GoKinoGo.Constants;
 using GoKinoGo.DataAccess.UnitOfWork;
 using GoKinoGo.DTOs.Genre;
 using GoKinoGo.Entities;
@@ -14,6 +15,13 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper) : IGenreServic
 
     public async Task<GenreDto> CreateGenreAsync(CreateGenreDto dto)
     {
+        var exists = await _unitOfWork.Genres
+            .ExistByNameAsync(dto.Name);
+        if (exists)
+        {
+            throw new ConflictException(ErrorMessages.Genre.NameExists);
+        }
+
         var genre = _mapper.Map<Genre>(dto);
         await _unitOfWork.Genres.AddAsync(genre);
         await _unitOfWork.SaveChangesAsync();
@@ -24,7 +32,7 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper) : IGenreServic
     public async Task DeleteGenreAsync(int genreId)
     {
         var genre = await _unitOfWork.Genres.GetByIdAsync(genreId)
-            ?? throw new NotFoundException(Constants.ErrorMessages.Genre.NotFound);
+            ?? throw new NotFoundException(ErrorMessages.Genre.NotFound);
         _unitOfWork.Genres.Remove(genre);
         await _unitOfWork.SaveChangesAsync();
     }
@@ -38,7 +46,7 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper) : IGenreServic
     public async Task<GenreDto> GetGenreByIdAsync(int genreId)
     {
         var genre = await _unitOfWork.Genres.GetByIdAsync(genreId)
-            ?? throw new NotFoundException(Constants.ErrorMessages.Genre.NotFound);
+            ?? throw new NotFoundException(ErrorMessages.Genre.NotFound);
 
         return _mapper.Map<GenreDto>(genre);
     }
@@ -46,7 +54,7 @@ public class GenreService(IUnitOfWork unitOfWork, IMapper mapper) : IGenreServic
     public async Task<GenreDto> UpdateGenreAsync(int genreId, UpdateGenreDto dto)
     {
         var genre = await _unitOfWork.Genres.GetByIdAsync(genreId)
-            ?? throw new NotFoundException(Constants.ErrorMessages.Genre.NotFound);
+            ?? throw new NotFoundException(ErrorMessages.Genre.NotFound);
 
         _mapper.Map(dto, genre);
         _unitOfWork.Genres.Update(genre);
