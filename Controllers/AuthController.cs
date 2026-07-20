@@ -1,5 +1,6 @@
 ﻿using GoKinoGo.DTOs.Auth;
 using GoKinoGo.DTOs.User;
+using GoKinoGo.Entities;
 using GoKinoGo.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +21,18 @@ public class AuthController(IAuthService authService) : BaseController
     public async Task<ActionResult<AuthResponseDto>> Register(CreateUserDto dto)
     {
         var result = await _authService.RegisterAsync(dto);
+        return CreatedAtAction(nameof(Register), result);
+    }
+    /// <summary>
+    /// Register a new admin user
+    /// </summary>
+    [HttpPost("register-admin")]
+    [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<AuthResponseDto>> RegisterAdmin(CreateUserDto dto)
+    {
+        var result = await _authService.RegisterAsync(dto, UserRole.Admin);
         return CreatedAtAction(nameof(Register), result);
     }
 

@@ -21,7 +21,7 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<JwtOpt
     private readonly JwtOptions _jwt = jwtOptions.Value;
     private readonly IPasswordHasher _passwordHasher = passwordHasher;
 
-    public async Task<AuthResponseDto> RegisterAsync(CreateUserDto dto)
+    public async Task<AuthResponseDto> RegisterAsync(CreateUserDto dto, UserRole userRole = UserRole.User)
     {
         var emailExists = await _unitOfWork.Users
             .ExistsByEmailAsync(dto.Email);
@@ -35,6 +35,7 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<JwtOpt
 
         var user = _mapper.Map<User>(dto);
         user.PasswordHash = _passwordHasher.HashPassword(dto.Password);
+        user.Role = userRole;
 
         await _unitOfWork.Users.AddAsync(user);
         await _unitOfWork.SaveChangesAsync();
