@@ -41,7 +41,7 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<JwtOpt
         await _unitOfWork.SaveChangesAsync();
 
         return new AuthResponseDto
-        {
+        { 
             Token = GenerateJwt(user),
             User = _mapper.Map<UserDto>(user)
         };

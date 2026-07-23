@@ -2,13 +2,13 @@
 
 namespace GoKinoGo.DTOs.Auth;
 
-public class LoginDto
+public record LoginDto
 {
     [Required]
     [EmailAddress]
-    [StringLength(100)]
-    public string Email { get; set; } = string.Empty;
+    [StringLength(100, ErrorMessage = "Email must be between 1 and 100 characters.")]
+    public required string Email { get; init; }
     [Required]
-    [StringLength(100, MinimumLength = 6)]
-    public string Password { get; set; } = string.Empty;
+    [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be between 6 and 100 characters.")]
+    public required string Password { get; init; }
 }

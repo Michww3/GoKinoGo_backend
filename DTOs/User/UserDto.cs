@@ -1,11 +1,10 @@
 ﻿namespace GoKinoGo.DTOs.User;
 
-public class UserDto
+public record UserDto
 {
-    public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string UserName { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string Role { get; set; } = string.Empty;
-
+    public required int Id { get; init; }
+    public required string Name { get; init; }
+    public required string UserName { get; init;}
+    public required string Email { get; init; }
+    public required string Role { get; set; }   
 }

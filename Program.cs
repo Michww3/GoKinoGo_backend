@@ -2,7 +2,6 @@ using GoKinoGo.Data;
 using GoKinoGo.DataAccess.Repositories;
 using GoKinoGo.DataAccess.Repositories.Interfaces;
 using GoKinoGo.DataAccess.UnitOfWork;
-using GoKinoGo.Entities;
 using GoKinoGo.Mapping;
 using GoKinoGo.Middlewares;
 using GoKinoGo.Services;

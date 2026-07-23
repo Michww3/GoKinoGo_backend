@@ -2,9 +2,9 @@
 
 namespace GoKinoGo.DTOs.Genre;
 
-public class CreateGenreDto
+public record CreateGenreDto
 {
     [Required]
-    [StringLength(50, MinimumLength = 2)]
-    public string Name { get; set; } = string.Empty;
+    [StringLength(50, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 50 characters.")]
+    public required string Name { get; init;}
 }

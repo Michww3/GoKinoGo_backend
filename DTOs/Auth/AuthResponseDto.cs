@@ -2,8 +2,8 @@
 
 namespace GoKinoGo.DTOs.Auth;
 
-public class AuthResponseDto
+public record AuthResponseDto
 {
-    public string Token { get; set; } = string.Empty;
-    public UserDto User { get; set; } = null!;
+    public required string Token { get; init; }
+    public required UserDto User { get; init; }
 }

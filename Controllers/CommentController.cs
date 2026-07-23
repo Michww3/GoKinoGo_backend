@@ -52,10 +52,10 @@ public class CommentController(ICommentService commentService) : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<CommentDto>> Create(int movieId, [FromBody] CreateCommentDto dto)
     {
-        dto.MovieId = movieId;
+        var updatedDto = dto with { MovieId = movieId };
         var userId = GetCurrentUserId();
-        var comment = await _commentService.CreateCommentAsync(dto, userId);
-        return CreatedAtAction(nameof(GetById), new { movieId, commentId = comment.Id }, comment);
+        var comment = await _commentService.CreateCommentAsync(updatedDto, userId);
+        return CreatedAtAction(nameof(GetById), new { movieId, commentId = comment.Id }, comment); 
     }
 
     /// <summary>

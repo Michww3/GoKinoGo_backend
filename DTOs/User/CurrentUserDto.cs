@@ -2,8 +2,8 @@
 
 namespace GoKinoGo.DTOs.User;
 
-public class CurrentUserDto
+public record CurrentUserDto
 {
-    public int Id { get; set; }
-    public UserRole Role { get; set; }
+    public int Id { get; init;}
+    public UserRole Role { get; init;}
 }

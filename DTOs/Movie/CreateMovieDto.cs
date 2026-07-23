@@ -2,19 +2,21 @@
 
 namespace GoKinoGo.DTOs.Movie;
 
-public class CreateMovieDto
+public record CreateMovieDto
 {
     [Required]
     [StringLength(150, MinimumLength = 1)]
-    public string Name { get; set; } = string.Empty;
+    public required string Name { get; init;}
     [Required]
     [StringLength(5000, MinimumLength = 1)]
-    public string Description { get; set; } = string.Empty;
+    public required string Description { get; init;}
     [Required]
-    public DateTime ReleaseDate { get; set; }
+    [DataType(DataType.Date)]
+    public required DateTime ReleaseDate { get; init; }
     [Required]
-    public TimeSpan Length { get; set; }
+    public required TimeSpan Length { get; init; }
     [Url]
-    public string PosterUrl { get; set; } = string.Empty;
-    public List<int> GenreIds { get; set; } = [];
+    public string PosterUrl { get; init;} = string.Empty;
+    [Required]
+    public required List<int> GenreIds { get; init;}
 }

@@ -3,8 +3,9 @@ using System.Runtime.CompilerServices;
 
 namespace GoKinoGo.DTOs.Genre;
 
-public class UpdateGenreDto
+public record UpdateGenreDto
 {
-    [StringLength(50, MinimumLength = 2)]
-    public string? Name { get; set; }
+    [Required]
+    [StringLength(50, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 50 characters.")]
+    public required string Name { get; set; }
 }

@@ -1,16 +1,16 @@
 ﻿namespace GoKinoGo.DTOs.Movie;
 
-public class UpdateMovieDto
+public record UpdateMovieDto
 {
-    public string? Name { get; set; }
+    public string? Name { get; init; }
 
-    public string? Description { get; set; }
+    public string? Description { get; init; }
 
-    public DateTime? ReleaseDate { get; set; }
+    public DateTime? ReleaseDate { get; init; }
 
-    public TimeSpan? Length { get; set; }
+    public TimeSpan? Length { get; init; }
 
-    public string? PosterUrl { get; set; }
+    public string? PosterUrl { get; init; }
 
-    public List<int>? GenreIds { get; set; }
+    public List<int>? GenreIds { get; init; }
 }

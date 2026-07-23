@@ -2,12 +2,12 @@
 
 namespace GoKinoGo.DTOs.Comment;
 
-public class CommentDto
+public record CommentDto
 {
-    public int Id { get; set; }
-    public string Content { get; set; } = string.Empty;
-    public DateTime CreationDate { get; set; }
-    public UserDto Owner { get; set; } = null!;
-    public int LikesCount { get; set; }
-    public bool IsLikedByCurrentUser { get; set; }
+    public required int Id { get; init; }
+    public required string Content { get; init; }
+    public required DateTime CreationDate { get; init; }
+    public required UserDto Owner { get; init; }
+    public required int LikesCount { get; init; }
+    public required bool IsLikedByCurrentUser { get; set;}
 }
