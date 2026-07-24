@@ -7,7 +7,7 @@ namespace GoKinoGo.Controllers;
 
 [Route("api/[controller]")]
 [Authorize]
-public class UserController(IUserService userService) : BaseController
+public class UsersController(IUserService userService) : BaseController
 {
     private readonly IUserService _userService = userService;
 

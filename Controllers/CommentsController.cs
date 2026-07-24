@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GoKinoGo.Controllers;
 
 [Route("api/movies/{movieId:int}/[controller]")]
-public class CommentController(ICommentService commentService) : BaseController
+public class CommentsController(ICommentService commentService) : BaseController
 {
     private readonly ICommentService _commentService = commentService;
 

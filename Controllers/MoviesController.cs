@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GoKinoGo.Controllers;
 
 [Route("api/[controller]")]
-public class MovieController(IMovieService movieService) : BaseController
+public class MoviesController(IMovieService movieService) : BaseController
 {
     private readonly IMovieService _movieService = movieService;
 

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GoKinoGo.Controllers;
 
 [Route("api/[controller]")]
-public class GenreController(IGenreService genreService) : BaseController
+public class GenresController(IGenreService genreService) : BaseController
 {
     private readonly IGenreService _genreService = genreService;
 
