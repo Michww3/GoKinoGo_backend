@@ -14,9 +14,9 @@ public class CommentService(IUnitOfWork unitOfWork, IMapper mapper) : ICommentSe
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<CommentDto> CreateCommentAsync(CreateCommentDto dto, int userId)
+    public async Task<CommentDto> CreateCommentAsync(int movieId, CreateCommentDto dto, int userId)
     {
-        _ = await _unitOfWork.Movies.GetByIdAsync(dto.MovieId)
+        _ = await _unitOfWork.Movies.GetByIdAsync(movieId)
             ?? throw new NotFoundException(ErrorMessages.Movie.NotFound);
 
         var comment = _mapper.Map<Comment>(dto);
@@ -50,11 +50,8 @@ public class CommentService(IUnitOfWork unitOfWork, IMapper mapper) : ICommentSe
             ?? throw new NotFoundException(ErrorMessages.Comment.NotFound);
 
         var commentDto = _mapper.Map<CommentDto>(comment);
-        if (currentUserId.HasValue)
-        {
-            commentDto.IsLikedByCurrentUser = await _unitOfWork.Comments.IsLikedByUserAsync(comment.Id, currentUserId.Value);
-        }
-        return commentDto;
+
+        return commentDto with { IsLikedByCurrentUser = currentUserId.HasValue && comment.Likes.Any(like => like.UserId == currentUserId.Value) };
     }
 
     public async Task<IEnumerable<CommentDto>> GetCommentsByMovieAsync(int movieId, int? currentUserId = null)
@@ -62,18 +59,15 @@ public class CommentService(IUnitOfWork unitOfWork, IMapper mapper) : ICommentSe
         var comments = await _unitOfWork.Comments.GetByMovieIdAsync(movieId);
         var commentDtos = _mapper.Map<List<CommentDto>>(comments);
 
-        if (currentUserId.HasValue)
-        {
-            var likedIds = await _unitOfWork.Likes.GetLikedCommentIdsAsync(
-                currentUserId.Value,
-                commentDtos.Select(c => c.Id));
+        if (!currentUserId.HasValue)
+            return commentDtos;
 
-            foreach (var dto in commentDtos)
-            {
-                dto.IsLikedByCurrentUser = likedIds.Contains(dto.Id);
-            }
-        }
-        return commentDtos;
+        var likedIds = await _unitOfWork.Likes.GetLikedCommentIdsAsync(
+            currentUserId.Value,
+            commentDtos.Select(c => c.Id));
+        var likedIdsSet = likedIds.ToHashSet();
+
+        return commentDtos.Select(dto => dto with { IsLikedByCurrentUser = likedIdsSet.Contains(dto.Id) });
     }
 
     public async Task<bool> ToggleLikeAsync(int commentId, int userId)

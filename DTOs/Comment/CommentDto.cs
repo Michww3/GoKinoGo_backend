@@ -9,5 +9,5 @@ public record CommentDto
     public required DateTime CreationDate { get; init; }
     public required UserDto Owner { get; init; }
     public required int LikesCount { get; init; }
-    public required bool IsLikedByCurrentUser { get; set;}
+    public required bool IsLikedByCurrentUser { get; init;}
 }
