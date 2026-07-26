@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using Serilog;
 using System.Text;
 
 namespace GoKinoGo;
@@ -112,6 +113,14 @@ public static partial class Program
             });
         });
 
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .WriteTo.File("logs/app.log")
+            .CreateLogger();
+
+        builder.Host.UseSerilog();
+
+
         var app = builder.Build();
 
         if (app.Environment.IsDevelopment())
@@ -120,6 +129,8 @@ public static partial class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+
+        app.UseSerilogRequestLogging();
 
         app.UseMiddleware<ExceptionMiddleware>();
 

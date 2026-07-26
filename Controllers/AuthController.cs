@@ -60,7 +60,7 @@ public class AuthController(IAuthService authService) : BaseController
     public async Task<ActionResult<UserDto>> Me()
     {
         var userId = GetCurrentUserId();
-        var user = _authService.Me(userId);
+        var user = await _authService.Me(userId);
 
         return Ok(user);
     }
