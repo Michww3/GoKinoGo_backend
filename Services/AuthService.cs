@@ -63,6 +63,13 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<JwtOpt
         };
     }
 
+    public async Task<UserDto> Me(int id)
+    {
+        var user = await _unitOfWork.Users.GetByIdAsync(id)
+            ?? throw new NotFoundException(ErrorMessages.User.NotFound);
+        return _mapper.Map<UserDto>(user);
+    }
+
     private string GenerateJwt(User user)
     {
         var claims = new[]

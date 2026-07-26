@@ -1,7 +1,9 @@
 ﻿using GoKinoGo.DTOs.Auth;
 using GoKinoGo.DTOs.User;
 using GoKinoGo.Entities;
+using GoKinoGo.Services;
 using GoKinoGo.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GoKinoGo.Controllers;
@@ -47,6 +49,20 @@ public class AuthController(IAuthService authService) : BaseController
     {
         var result = await _authService.LoginAsync(dto);
         return Ok(result);
+    }
+
+    /// <summary>
+    /// Get current authorized user
+    /// </summary>
+    /// <returns></returns>
+    [Authorize]
+    [HttpGet("me")]
+    public async Task<ActionResult<UserDto>> Me()
+    {
+        var userId = GetCurrentUserId();
+        var user = _authService.Me(userId);
+
+        return Ok(user);
     }
 
 }
