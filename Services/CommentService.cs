@@ -22,6 +22,7 @@ public class CommentService(IUnitOfWork unitOfWork, IMapper mapper) : ICommentSe
         var comment = _mapper.Map<Comment>(dto);
         comment.OwnerId = userId;
         comment.CreationDate = DateTime.UtcNow;
+        comment.MovieId = movieId;
 
         await _unitOfWork.Comments.AddAsync(comment);
         await _unitOfWork.SaveChangesAsync();
