@@ -35,4 +35,13 @@ public class BaseController : ControllerBase
             ?? throw new UnauthorizedAccessException(ErrorMessages.User.Unauthorized);
         return currentUser.Id;
     }
+
+    protected int? GetCurrentUserIdOrNull()
+    {
+        var claim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+        return claim == null
+            ? null
+            : int.Parse(claim.Value);
+    }
 }

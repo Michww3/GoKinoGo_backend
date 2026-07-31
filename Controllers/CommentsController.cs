@@ -18,10 +18,10 @@ public class CommentsController(ICommentService commentService) : BaseController
     [ProducesResponseType(typeof(IEnumerable<CommentDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<CommentDto>>> GetByMovie(int movieId)
     {
-        var currentUser = GetCurrentUser();
+        var currentUserId = GetCurrentUserIdOrNull();
         var comments = await _commentService.GetCommentsByMovieAsync(
             movieId,
-            currentUser?.Id);
+            currentUserId);
         return Ok(comments);
     }
 
