@@ -10,5 +10,7 @@ public interface IUnitOfWork
     ICommentRepository Comments { get; }
     IGenreRepository Genres { get; }
     ILikeRepository Likes { get; }
+    IMovieCollectionRepository MovieCollections { get; }
+    ICollectionItemRepository CollectionItems { get; }
     Task<int> SaveChangesAsync();
 }

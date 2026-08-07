@@ -4,6 +4,7 @@ using GoKinoGo.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GoKinoGo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260804025246_AddFeaturedMovie")]
+    partial class AddFeaturedMovie
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,36 +38,6 @@ namespace GoKinoGo.Migrations
                     b.HasIndex("MoviesId");
 
                     b.ToTable("GenreMovie");
-                });
-
-            modelBuilder.Entity("GoKinoGo.Entities.CollectionItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CollectionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MovieId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Position")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MovieId");
-
-                    b.HasIndex("CollectionId", "MovieId")
-                        .IsUnique();
-
-                    b.HasIndex("CollectionId", "Position")
-                        .IsUnique();
-
-                    b.ToTable("CollectionItems");
                 });
 
             modelBuilder.Entity("GoKinoGo.Entities.Comment", b =>
@@ -95,6 +68,31 @@ namespace GoKinoGo.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("GoKinoGo.Entities.FeaturedMovie", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MovieId")
+                        .IsUnique();
+
+                    b.HasIndex("Position")
+                        .IsUnique();
+
+                    b.ToTable("FeaturedMovie");
                 });
 
             modelBuilder.Entity("GoKinoGo.Entities.Genre", b =>
@@ -175,32 +173,6 @@ namespace GoKinoGo.Migrations
                     b.ToTable("Movies");
                 });
 
-            modelBuilder.Entity("GoKinoGo.Entities.MovieCollection", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("MovieCollections");
-                });
-
             modelBuilder.Entity("GoKinoGo.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -254,25 +226,6 @@ namespace GoKinoGo.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("GoKinoGo.Entities.CollectionItem", b =>
-                {
-                    b.HasOne("GoKinoGo.Entities.MovieCollection", "Collection")
-                        .WithMany("Items")
-                        .HasForeignKey("CollectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GoKinoGo.Entities.Movie", "Movie")
-                        .WithMany("CollectionItems")
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Collection");
-
-                    b.Navigation("Movie");
-                });
-
             modelBuilder.Entity("GoKinoGo.Entities.Comment", b =>
                 {
                     b.HasOne("GoKinoGo.Entities.Movie", "Movie")
@@ -290,6 +243,17 @@ namespace GoKinoGo.Migrations
                     b.Navigation("Movie");
 
                     b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("GoKinoGo.Entities.FeaturedMovie", b =>
+                {
+                    b.HasOne("GoKinoGo.Entities.Movie", "Movie")
+                        .WithOne("FeaturedMovie")
+                        .HasForeignKey("GoKinoGo.Entities.FeaturedMovie", "MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Movie");
                 });
 
             modelBuilder.Entity("GoKinoGo.Entities.Like", b =>
@@ -318,14 +282,9 @@ namespace GoKinoGo.Migrations
 
             modelBuilder.Entity("GoKinoGo.Entities.Movie", b =>
                 {
-                    b.Navigation("CollectionItems");
-
                     b.Navigation("Comments");
-                });
 
-            modelBuilder.Entity("GoKinoGo.Entities.MovieCollection", b =>
-                {
-                    b.Navigation("Items");
+                    b.Navigation("FeaturedMovie");
                 });
 
             modelBuilder.Entity("GoKinoGo.Entities.User", b =>

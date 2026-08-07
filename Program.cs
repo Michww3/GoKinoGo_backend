@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Serilog;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace GoKinoGo;
 
@@ -69,13 +70,17 @@ public static partial class Program
         builder.Services.AddScoped<ICommentRepository, CommentRepository>();
         builder.Services.AddScoped<ILikeRepository, LikeRepository>();
         builder.Services.AddScoped<IGenreRepository, GenreRepository>();
+        builder.Services.AddScoped<IMovieCollectionRepository, MovieCollectionRepository>();
+        builder.Services.AddScoped<ICollectionItemRepository, CollectionItemRepository>();
 
         builder.Services.AddScoped<IMovieService, MovieService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<ICommentService, CommentService>();
         builder.Services.AddScoped<IGenreService, GenreService>();
-        builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+        builder.Services.AddScoped<IPasswordHasherService, PasswordHasherService>();
+        builder.Services.AddScoped<IMovieCollectionService, MovieCollectionService>();
+        builder.Services.AddScoped<ICollectionItemService, CollectionItemService>();
 
         builder.Services.AddAutoMapper(cfg =>
         {
@@ -83,7 +88,16 @@ public static partial class Program
             cfg.AddProfile<GenreProfile>();
             cfg.AddProfile<MovieProfile>();
             cfg.AddProfile<UserProfile>();
+            cfg.AddProfile<MovieCollectionProfile>();
         });
+
+        builder.Services
+            .AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions
+                    .Converters.Add(new JsonStringEnumConverter());
+            });
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();

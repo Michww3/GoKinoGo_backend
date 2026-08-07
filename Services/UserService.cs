@@ -8,11 +8,11 @@ using GoKinoGo.Services.Interfaces;
 
 namespace GoKinoGo.Services;
 
-public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasher passwordHasher) : IUserService
+public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasherService passwordHasher) : IUserService
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IMapper _mapper = mapper;
-    private readonly IPasswordHasher _passwordHasher = passwordHasher;
+    private readonly IPasswordHasherService _passwordHasher = passwordHasher;
 
     public async Task<UserDto> GetUserByIdAsync(int userId)
     {

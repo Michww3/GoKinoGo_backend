@@ -10,4 +10,5 @@ public class Movie
     public string PosterUrl { get; set; } = string.Empty;
     public ICollection<Genre> Genres { get; set; } = [];
     public ICollection<Comment> Comments { get; set; } = [];
+    public ICollection<CollectionItem> CollectionItems { get; set; } = [];
 }

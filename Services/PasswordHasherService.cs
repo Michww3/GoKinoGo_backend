@@ -2,7 +2,7 @@
 
 namespace GoKinoGo.Services;
 
-public class PasswordHasher : IPasswordHasher
+public class PasswordHasherService : IPasswordHasherService
 {
     public string HashPassword(string password)
     {

@@ -48,4 +48,18 @@ public static class ErrorMessages
     {
         public const string InvalidCredentials = "Invalid email or password.";
     }
+
+    public static class MovieCollection
+    {
+        public const string NotFound = "Movie collection not found.";
+        public const string NameExists = "Movie collection with this name already exists.";
+        public const string InvalidType = "Invalid collection type.";
+    }
+
+    public static class CollectionItem
+    {
+        public const string NotFound = "Collection item not found.";
+        public const string PositionExists = "An item already exists at this position.";
+        public const string ItemAlreadyInCollection = "This movie is already in the collection.";
+    }
 }

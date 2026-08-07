@@ -14,5 +14,7 @@ public class UnitOfWork(AppDbContext context) : IUnitOfWork
     public ICommentRepository Comments { get; } = new CommentRepository(context);
     public IGenreRepository Genres { get; } = new GenreRepository(context);
     public ILikeRepository Likes { get; } = new LikeRepository(context);
+    public IMovieCollectionRepository MovieCollections { get; } = new MovieCollectionRepository(context);
+    public ICollectionItemRepository CollectionItems { get; } = new CollectionItemRepository(context);
     public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();
 }

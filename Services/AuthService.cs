@@ -14,12 +14,12 @@ using System.Text;
 
 namespace GoKinoGo.Services;
 
-public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<JwtOptions> jwtOptions, IPasswordHasher passwordHasher) : IAuthService
+public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<JwtOptions> jwtOptions, IPasswordHasherService passwordHasher) : IAuthService
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IMapper _mapper = mapper;
     private readonly JwtOptions _jwt = jwtOptions.Value;
-    private readonly IPasswordHasher _passwordHasher = passwordHasher;
+    private readonly IPasswordHasherService _passwordHasher = passwordHasher;
 
     public async Task<AuthResponseDto> RegisterAsync(CreateUserDto dto, UserRole userRole = UserRole.User)
     {

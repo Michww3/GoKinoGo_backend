@@ -10,6 +10,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Genre> Genres { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Like> Likes { get; set; }
+    public DbSet<MovieCollection> MovieCollections { get; set; }
+    public DbSet<CollectionItem> CollectionItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -60,5 +62,37 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<Movie>()
             .HasMany(m => m.Genres)
             .WithMany(g => g.Movies);
+
+        modelBuilder.Entity<CollectionItem>()
+            .HasOne(ci => ci.Movie)
+            .WithMany(m => m.CollectionItems)
+            .HasForeignKey(ci => ci.MovieId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<CollectionItem>()
+            .HasOne(ci => ci.Collection)
+            .WithMany(c => c.Items)
+            .HasForeignKey(ci => ci.CollectionId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<CollectionItem>()
+            .HasIndex(ci => new
+            {
+                ci.CollectionId,
+                ci.MovieId
+            })
+            .IsUnique();
+
+        modelBuilder.Entity<CollectionItem>()
+            .HasIndex(ci => new
+            {
+                ci.CollectionId,
+                ci.Position
+            })
+            .IsUnique();
+
+        modelBuilder.Entity<MovieCollection>()
+            .HasIndex(x => x.Name)
+            .IsUnique();
     }
 }

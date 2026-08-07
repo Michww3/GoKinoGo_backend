@@ -1,4 +1,6 @@
-﻿namespace GoKinoGo.DTOs.User;
+﻿using GoKinoGo.Entities;
+
+namespace GoKinoGo.DTOs.User;
 
 public record UserDto
 {
@@ -6,5 +8,5 @@ public record UserDto
     public required string Name { get; init; }
     public required string UserName { get; init;}
     public required string Email { get; init; }
-    public required string Role { get; set; }   
+    public required UserRole Role { get; set; }   
 }

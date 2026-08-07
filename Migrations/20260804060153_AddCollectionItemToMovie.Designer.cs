@@ -4,6 +4,7 @@ using GoKinoGo.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GoKinoGo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260804060153_AddCollectionItemToMovie")]
+    partial class AddCollectionItemToMovie
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,7 +67,7 @@ namespace GoKinoGo.Migrations
                     b.HasIndex("CollectionId", "Position")
                         .IsUnique();
 
-                    b.ToTable("CollectionItems");
+                    b.ToTable("CollectionItem");
                 });
 
             modelBuilder.Entity("GoKinoGo.Entities.Comment", b =>
@@ -188,17 +191,14 @@ namespace GoKinoGo.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("MovieCollections");
+                    b.ToTable("MovieCollection");
                 });
 
             modelBuilder.Entity("GoKinoGo.Entities.User", b =>
