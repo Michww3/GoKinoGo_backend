@@ -11,6 +11,9 @@ public record CreateMovieDto
     [StringLength(5000, MinimumLength = 1, ErrorMessage = "Description must be between 1 and 5000 characters.")]
     public required string Description { get; init;}
     [Required]
+    [Range(0, 1000000, ErrorMessage = "Price must be a positive value.")]
+    public required decimal Price { get; init; }
+    [Required]
     [DataType(DataType.Date)]
     public required DateTime ReleaseDate { get; init; }
     [Required]

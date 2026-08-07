@@ -7,6 +7,7 @@ public class Movie
     public string Description { get; set; } = string.Empty;
     public DateTime ReleaseDate { get; set; }
     public TimeSpan Length { get; set; }
+    public decimal Price { get; set; }
     public string PosterUrl { get; set; } = string.Empty;
     public ICollection<Genre> Genres { get; set; } = [];
     public ICollection<Comment> Comments { get; set; } = [];

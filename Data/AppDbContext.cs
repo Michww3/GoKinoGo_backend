@@ -63,6 +63,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasMany(m => m.Genres)
             .WithMany(g => g.Movies);
 
+        modelBuilder.Entity<Movie>()
+            .Property(x => x.Price)
+            .HasPrecision(10, 2);
+
         modelBuilder.Entity<CollectionItem>()
             .HasOne(ci => ci.Movie)
             .WithMany(m => m.CollectionItems)
