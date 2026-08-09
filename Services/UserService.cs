@@ -5,6 +5,7 @@ using GoKinoGo.DTOs.User;
 using GoKinoGo.Entities;
 using GoKinoGo.Exceptions;
 using GoKinoGo.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace GoKinoGo.Services;
 
@@ -54,13 +55,18 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasher
 
     public async Task DeleteUserAsync(int userId, CurrentUserDto currentUser)
     {
+        if (userId != currentUser.Id && currentUser.Role != UserRole.Admin)
+            throw new ForbiddenException(ErrorMessages.User.CannotDeleteOtherUser);
         var user = await _unitOfWork.Users.GetByIdAsync(userId)
             ?? throw new NotFoundException(ErrorMessages.User.NotFound);
-        if (user.Id != currentUser.Id && currentUser.Role != UserRole.Admin)
-            throw new ForbiddenException(ErrorMessages.User.CannotDeleteOtherUser);
 
         _unitOfWork.Users.Remove(user);
-        await _unitOfWork.SaveChangesAsync();
+
+        try
+        {
+            await _unitOfWork.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException) { };
     }
 
     public async Task<bool> ExistsByEmailAsync(string email)
