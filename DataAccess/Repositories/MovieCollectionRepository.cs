@@ -32,6 +32,7 @@ public class MovieCollectionRepository(AppDbContext context) : Repository<MovieC
                     .Include(mc => mc.Items
                         .OrderBy(ci => ci.Position))
                     .ThenInclude(x => x.Movie)
+                    .ThenInclude(m => m.Genres)
                     .FirstOrDefaultAsync(mc => mc.Id == id);
     }
 }
