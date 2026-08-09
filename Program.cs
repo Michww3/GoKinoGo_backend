@@ -89,6 +89,7 @@ public static partial class Program
             cfg.AddProfile<MovieProfile>();
             cfg.AddProfile<UserProfile>();
             cfg.AddProfile<MovieCollectionProfile>();
+            cfg.AddProfile<CollectionItemProfile>();
         });
 
         builder.Services

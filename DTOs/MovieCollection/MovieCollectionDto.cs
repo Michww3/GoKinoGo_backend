@@ -1,4 +1,5 @@
-﻿using GoKinoGo.Entities;
+﻿using GoKinoGo.DTOs.CollectionItem;
+using GoKinoGo.Entities;
 
 namespace GoKinoGo.DTOs.MovieCollection;
 
@@ -8,4 +9,5 @@ public record MovieCollectionDto
     public required string Name { get; init; }
     public required CollectionType Type { get; init; }
     public required bool IsActive { get; init; }
+    public ICollection<CollectionItemDto> Items { get; init; } = [];
 }

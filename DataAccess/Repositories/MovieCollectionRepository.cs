@@ -29,7 +29,8 @@ public class MovieCollectionRepository(AppDbContext context) : Repository<MovieC
     public async Task<MovieCollection?> GetByIdWithMoviesAsync(int id)
     {
         return await _dbSet
-                    .Include(mc => mc.Items)
+                    .Include(mc => mc.Items
+                        .OrderBy(ci => ci.Position))
                     .ThenInclude(x => x.Movie)
                     .FirstOrDefaultAsync(mc => mc.Id == id);
     }
