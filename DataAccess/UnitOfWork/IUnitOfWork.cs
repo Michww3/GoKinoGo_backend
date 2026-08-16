@@ -11,6 +11,7 @@ public interface IUnitOfWork
     IGenreRepository Genres { get; }
     ILikeRepository Likes { get; }
     IMovieCollectionRepository MovieCollections { get; }
+    IMovieRatingRepository MovieRatings { get; }
     ICollectionItemRepository CollectionItems { get; }
     Task<int> SaveChangesAsync();
 }

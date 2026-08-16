@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GoKinoGo.Constants;
 using GoKinoGo.DataAccess.UnitOfWork;
+using GoKinoGo.DTOs.MovieRating;
 using GoKinoGo.DTOs.User;
 using GoKinoGo.Entities;
 using GoKinoGo.Exceptions;
@@ -77,6 +78,13 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasher
     public async Task<bool> ExistsByUserNameAsync(string userName)
     {
         return await _unitOfWork.Users.ExistsByUserNameAsync(userName);
+    }
+
+    public async Task<IEnumerable<MovieRatingDto>> GetUserRatings(int userId)
+    {
+        var ratings = await _unitOfWork.MovieRatings.GetByUserAsync(userId);
+
+        return _mapper.Map<IEnumerable<MovieRatingDto>>(ratings);
     }
 
 }

@@ -4,9 +4,9 @@ namespace GoKinoGo.Services.Interfaces;
 
 public interface IMovieService
 {
-    Task<IEnumerable<MovieDto>> GetAllMoviesAsync();
-    Task<MovieDto> GetMovieByIdAsync(int movieId);
-    Task<(IEnumerable<MovieDto> Movies, int TotalCount)> GetPagedMoviesAsync(
+    Task<IEnumerable<MovieCardDto>> GetAllMoviesAsync();
+    Task<MovieDetailsDto> GetMovieDetailsByIdAsync(int movieId, int? userId);
+    Task<(IEnumerable<MovieCardDto> Movies, int TotalCount)> GetPagedMoviesAsync(
         int pageNumber,
         int pageSize,
         string? searchQuery = null);

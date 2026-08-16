@@ -39,6 +39,36 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasForeignKey(c => c.MovieId)
             .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<MovieRating>()
+                .HasIndex(r => new
+                {
+                    r.MovieId,
+                    r.UserId
+                })
+                .IsUnique();
+
+            modelBuilder.Entity<MovieRating>()
+                .HasOne(r => r.Movie)
+                .WithMany(m => m.MovieRatings)
+                .HasForeignKey(r => r.MovieId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<MovieRating>()
+                .HasOne(r => r.User)
+                .WithMany(u => u.MovieRatings)
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<MovieRating>()
+                .Property(r => r.Value)
+                .IsRequired();
+
+            modelBuilder.Entity<MovieRating>()
+                .ToTable(t => t.HasCheckConstraint(
+                    "CK_MovieRating_Value",
+                    "[Value] >= 1 AND [Value] <= 10"
+                ));
+
         modelBuilder.Entity<Like>()
             .HasIndex(l => new
             {

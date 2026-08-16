@@ -13,29 +13,24 @@ public class MovieService(IUnitOfWork unitOfWork, IMapper mapper) : IMovieServic
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<IEnumerable<MovieDto>> GetAllMoviesAsync()
+    public async Task<IEnumerable<MovieCardDto>> GetAllMoviesAsync()
     {
-        var movies = await _unitOfWork.Movies.GetMoviesWithGenresAsync();
-        return _mapper.Map<IEnumerable<MovieDto>>(movies);
+        return await _unitOfWork.Movies.GetAllMoviesAsync();
     }
 
-    public async Task<MovieDto> GetMovieByIdAsync(int movieId)
+    public async Task<MovieDetailsDto> GetMovieDetailsByIdAsync(int movieId, int? userId)
     {
-        var movie = await _unitOfWork.Movies.GetMovieWithGenresByIdAsync(movieId)
+        var movie = await _unitOfWork.Movies.GetMovieDetailsByIdAsync(movieId, userId)
             ?? throw new NotFoundException(ErrorMessages.Movie.NotFound);
-        return _mapper.Map<MovieDto>(movie);
+        return movie;
     }
 
-    public async Task<(IEnumerable<MovieDto> Movies, int TotalCount)> GetPagedMoviesAsync(
+    public async Task<(IEnumerable<MovieCardDto> Movies, int TotalCount)> GetPagedMoviesAsync(
         int pageNumber,
         int pageSize,
         string? searchQuery = null)
     {
-        var (movies, totalCount) = await _unitOfWork.Movies.GetPagedAsync(
-            pageNumber, pageSize, searchQuery);
-
-        var moviesDto = _mapper.Map<IEnumerable<MovieDto>>(movies);
-        return (moviesDto, totalCount);
+        throw new NotImplementedException();
     }
 
     public async Task<MovieDto> CreateMovieAsync(CreateMovieDto dto)
@@ -46,7 +41,7 @@ public class MovieService(IUnitOfWork unitOfWork, IMapper mapper) : IMovieServic
         {
             var genreIds = dto.GenreIds.Distinct().ToList();
 
-            var genres = await _unitOfWork.Genres.FindAsync(g => genreIds.Contains(g.Id));
+            var genres = (await _unitOfWork.Genres.FindAsync(g => genreIds.Contains(g.Id))).ToList();
 
             if (genreIds.Count != genres.Count())
             {
@@ -66,7 +61,7 @@ public class MovieService(IUnitOfWork unitOfWork, IMapper mapper) : IMovieServic
 
     public async Task<MovieDto> UpdateMovieAsync(int movieId, UpdateMovieDto dto)
     {
-        var movie = await _unitOfWork.Movies.GetMovieWithGenresByIdAsync(movieId)
+        var movie = await _unitOfWork.Movies.GetTrackedByIdAsync(movieId)
             ?? throw new NotFoundException(ErrorMessages.Movie.NotFound);
 
         _mapper.Map(dto, movie);

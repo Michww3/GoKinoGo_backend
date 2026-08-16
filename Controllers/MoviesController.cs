@@ -15,8 +15,8 @@ public class MoviesController(IMovieService movieService) : BaseController
     /// </summary>
     [HttpGet]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(IEnumerable<MovieDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<MovieDto>>> GetAll()
+    [ProducesResponseType(typeof(IEnumerable<MovieCardDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<MovieCardDto>>> GetAll()
     {
         var movies = await _movieService.GetAllMoviesAsync();
         return Ok(movies);
@@ -33,17 +33,7 @@ public class MoviesController(IMovieService movieService) : BaseController
         [FromQuery] int pageSize = 10,
         [FromQuery] string? searchQuery = null)
     {
-        var (movies, totalCount) = await _movieService.GetPagedMoviesAsync(
-            pageNumber, pageSize, searchQuery);
-
-        return Ok(new
-        {
-            items = movies,
-            totalCount,
-            pageNumber,
-            pageSize,
-            totalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
-        });
+        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -51,11 +41,12 @@ public class MoviesController(IMovieService movieService) : BaseController
     /// </summary>
     [HttpGet("{id:int}")]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(MovieDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(MovieDetailsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<MovieDto>> GetById(int id)
+    public async Task<ActionResult<MovieDetailsDto>> GetById(int id)
     {
-        var movie = await _movieService.GetMovieByIdAsync(id);
+        int? userId = GetCurrentUserIdOrNull();
+        var movie = await _movieService.GetMovieDetailsByIdAsync(id, userId);
         return Ok(movie);
     }
 

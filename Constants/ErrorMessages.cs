@@ -62,4 +62,11 @@ public static class ErrorMessages
         public const string PositionExists = "An item already exists at this position.";
         public const string ItemAlreadyInCollection = "This movie is already in the collection.";
     }
+
+    public static class MovieRating
+    {
+        public const string NotFound = "Movie rating not found.";
+        public const string InvalidValue = "Rating value must be between 1 and 10.";
+        public const string CannotDeleteOtherRating = "You do not have permission to delete this rating.";
+    }
 }

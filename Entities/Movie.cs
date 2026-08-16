@@ -9,6 +9,7 @@ public class Movie
     public TimeSpan Length { get; set; }
     public decimal Price { get; set; }
     public string PosterUrl { get; set; } = string.Empty;
+    public ICollection<MovieRating> MovieRatings { get; set; } = [];
     public ICollection<Genre> Genres { get; set; } = [];
     public ICollection<Comment> Comments { get; set; } = [];
     public ICollection<CollectionItem> CollectionItems { get; set; } = [];

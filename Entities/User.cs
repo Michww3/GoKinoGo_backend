@@ -9,5 +9,6 @@ public class User
     public string PasswordHash { get; set; } = string.Empty;
     public ICollection<Comment> Comments { get; set; } = [];
     public ICollection<Like> Likes { get; set; } = [];
+    public ICollection<MovieRating> MovieRatings { get; set; } = [];
     public UserRole Role { get; set; } = UserRole.User;
 }

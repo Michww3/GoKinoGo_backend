@@ -9,6 +9,8 @@ public class MovieProfile : Profile
     public MovieProfile()
     {
         CreateMap<Movie, MovieDto>();
+        CreateMap<Movie, MovieCardDto>();
+        CreateMap<Movie, MovieDetailsDto>();
         CreateMap<CreateMovieDto, Movie>()
             .ForMember(dest => dest.Genres, opt => opt.Ignore());
         CreateMap<UpdateMovieDto, Movie>()

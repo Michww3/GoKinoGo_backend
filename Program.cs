@@ -72,6 +72,7 @@ public static partial class Program
         builder.Services.AddScoped<IGenreRepository, GenreRepository>();
         builder.Services.AddScoped<IMovieCollectionRepository, MovieCollectionRepository>();
         builder.Services.AddScoped<ICollectionItemRepository, CollectionItemRepository>();
+        builder.Services.AddScoped<IMovieRatingRepository, MovieRatingRepository>();
 
         builder.Services.AddScoped<IMovieService, MovieService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
@@ -81,6 +82,7 @@ public static partial class Program
         builder.Services.AddScoped<IPasswordHasherService, PasswordHasherService>();
         builder.Services.AddScoped<IMovieCollectionService, MovieCollectionService>();
         builder.Services.AddScoped<ICollectionItemService, CollectionItemService>();
+        builder.Services.AddScoped<IMovieRatingService, MovieRatingService>();
 
         builder.Services.AddAutoMapper(cfg =>
         {
@@ -90,6 +92,7 @@ public static partial class Program
             cfg.AddProfile<UserProfile>();
             cfg.AddProfile<MovieCollectionProfile>();
             cfg.AddProfile<CollectionItemProfile>();
+            cfg.AddProfile<MovieRatingProfile>();
         });
 
         builder.Services
@@ -147,7 +150,7 @@ public static partial class Program
 
         app.UseSerilogRequestLogging();
 
-        app.UseMiddleware<ExceptionMiddleware>();
+        //app.UseMiddleware<ExceptionMiddleware>();
 
         app.UseAuthentication();
         app.UseAuthorization();

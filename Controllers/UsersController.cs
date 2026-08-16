@@ -1,7 +1,9 @@
-﻿using GoKinoGo.DTOs.User;
+﻿using GoKinoGo.DTOs.MovieRating;
+using GoKinoGo.DTOs.User;
 using GoKinoGo.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace GoKinoGo.Controllers;
 
@@ -74,5 +76,16 @@ public class UsersController(IUserService userService) : BaseController
     {
         var exists = await _userService.ExistsByUserNameAsync(userName);
         return Ok(exists);
+    }
+
+    [HttpGet("ratings")]
+    [Authorize]
+    public async Task<ActionResult<IEnumerable<MovieRatingDto>>> GetMyRatings()
+    {
+        var userId = GetCurrentUserId();
+
+        var ratings = await _userService.GetUserRatings(userId);
+
+        return Ok(ratings);
     }
 }
