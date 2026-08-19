@@ -35,16 +35,13 @@ public class MovieRatingService(IUnitOfWork unitOfWork) : IMovieRatingService
         await _unitOfWork.SaveChangesAsync();
     }
 
-    public async Task DeleteRatingAsync(int movieId, int ratingId, CurrentUserDto currentUser)
+    public async Task DeleteRatingAsync(int movieId, CurrentUserDto currentUser)
     {
         _ = await _unitOfWork.Movies.GetByIdAsync(movieId)
             ?? throw new NotFoundException(ErrorMessages.Movie.NotFound);
 
-        var rating = await _unitOfWork.MovieRatings.GetByIdAsync(ratingId)
+        var rating = await _unitOfWork.MovieRatings.GetByMovieAndUserAsync(movieId, currentUser.Id)
             ?? throw new NotFoundException(ErrorMessages.MovieRating.NotFound);
-
-        if (rating.MovieId != movieId)
-            throw new NotFoundException(ErrorMessages.MovieRating.NotFound);
 
         if (rating.UserId != currentUser.Id && currentUser.Role != UserRole.Admin)
             throw new ForbiddenException(ErrorMessages.MovieRating.CannotDeleteOtherRating);

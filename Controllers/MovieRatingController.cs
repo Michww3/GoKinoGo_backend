@@ -15,8 +15,7 @@ public class MovieRatingController(IMovieRatingService movieRatingService) : Bas
     [Authorize]
     public async Task<IActionResult> Rate(int movieId, [FromBody] RateMovieDto dto)
     {
-        var userId = int.Parse(
-            User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
         await _movieRatingService.RateAsync(
             movieId,
@@ -26,16 +25,13 @@ public class MovieRatingController(IMovieRatingService movieRatingService) : Bas
         return NoContent();
     }
 
-    [HttpDelete("{ratingId:int}")]
+    [HttpDelete]
     [Authorize]
-    public async Task<IActionResult> Delete(int movieId, int ratingId)
+    public async Task<IActionResult> Delete(int movieId)
     {
         var currentUser = GetCurrentUser();
 
-        await _movieRatingService.DeleteRatingAsync(
-            movieId,
-            ratingId,
-            currentUser);
+        await _movieRatingService.DeleteRatingAsync(movieId, currentUser);
 
         return NoContent();
     }

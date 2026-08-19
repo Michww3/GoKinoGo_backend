@@ -2,8 +2,6 @@
 using GoKinoGo.DTOs.User;
 using GoKinoGo.Entities;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Reflection.Metadata;
 using System.Security.Claims;
 
 namespace GoKinoGo.Controllers;
