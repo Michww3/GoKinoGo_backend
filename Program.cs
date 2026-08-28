@@ -150,7 +150,7 @@ public static partial class Program
 
         app.UseSerilogRequestLogging();
 
-        app.UseMiddleware<ExceptionMiddleware>();
+        //app.UseMiddleware<ExceptionMiddleware>();
 
         app.UseAuthentication();
         app.UseAuthorization();

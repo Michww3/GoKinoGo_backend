@@ -2,6 +2,7 @@
 using GoKinoGo.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace GoKinoGo.Controllers;
 
@@ -28,12 +29,22 @@ public class MoviesController(IMovieService movieService) : BaseController
     [HttpGet("paged")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult> GetPaged(
-        [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 10,
-        [FromQuery] string? searchQuery = null)
+    public async Task<ActionResult<PagedResult<MovieCardDto>>> GetPaged([FromQuery] MoviesQuery query)
     {
-        throw new NotImplementedException();
+        var (items, totalCount) =
+            await _movieService.GetPagedMoviesAsync(query);
+
+        var totalPages = (int)Math.Ceiling(
+            (double)totalCount / query.PageSize);
+
+        return Ok(new PagedResult<MovieCardDto>
+        {
+            Items = items,
+            PageNumber = query.PageNumber,
+            PageSize = query.PageSize,
+            TotalCount = totalCount,
+            TotalPages = totalPages
+        });
     }
 
     /// <summary>

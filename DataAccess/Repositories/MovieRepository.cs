@@ -75,9 +75,101 @@ public class MovieRepository(AppDbContext context) : Repository<Movie>(context),
             .ToListAsync();
     }
 
-    public async Task<(IEnumerable<MovieCardDto> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize, string? searchQuery = null)
+    public async Task<(IEnumerable<MovieCardDto> Items, int TotalCount)> GetPagedAsync(MoviesQuery query)
     {
-        throw new NotImplementedException();
+        var movies = _dbSet.AsNoTracking().AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(query.SearchQuery))
+        {
+            var searchQuery = query.SearchQuery.Trim().ToLower();
+            movies = movies.Where(m => m.Name.ToLower().Contains(searchQuery));
+        }
+
+        if(query.GenreIds != null && query.GenreIds!.Length > 0)
+        {
+            movies = movies.Where(m => m.Genres.Any(g => query.GenreIds.Contains(g.Id)));
+        }
+
+        if (query.MinPrice.HasValue)
+        {
+            movies = movies.Where(m =>
+                m.Price >= query.MinPrice.Value);
+        }
+
+        if (query.MaxPrice.HasValue)
+        {
+            movies = movies.Where(m =>
+                m.Price <= query.MaxPrice.Value);
+        }
+
+        if (query.MinYear.HasValue)
+        {
+            movies = movies.Where(m =>
+                m.ReleaseDate.Year >= query.MinYear.Value);
+        }
+
+        if (query.MaxYear.HasValue)
+        {
+            movies = movies.Where(m =>
+                m.ReleaseDate.Year <= query.MaxYear.Value);
+        }
+
+        if (query.MinRating.HasValue)
+        {
+            movies = movies.Where(m =>
+                m.MovieRatings.Any() &&
+                m.MovieRatings.Average(r => r.Value) >= query.MinRating.Value);
+        }
+
+        movies = query.SortBy switch
+        {
+            "dateAsc" =>
+                movies.OrderBy(m => m.ReleaseDate),
+
+            "dateDesc" =>
+                movies.OrderByDescending(m => m.ReleaseDate),
+
+            "ratingDesc" =>
+                movies.OrderByDescending(m =>
+                    m.MovieRatings
+                        .Select(r => (double?)r.Value)
+                        .Average() ?? 0),
+
+            "recentlyAdded" => 
+            movies.OrderByDescending(m => m.Id),
+                
+            _ =>
+                movies.OrderByDescending(m => m.Id)
+        };
+
+        var totalCount = await movies.CountAsync();
+
+        var items = await movies
+            .Skip((query.PageNumber - 1) * query.PageSize)
+            .Take(query.PageSize)
+            .Select(m => new MovieCardDto
+            {
+                Id = m.Id,
+                Name = m.Name,
+                Price = m.Price,
+                PosterUrl = m.PosterUrl,
+                ReleaseDate = m.ReleaseDate,
+
+                Genres = m.Genres
+                    .Select(g => new GenreDto
+                    {
+                        Id = g.Id,
+                        Name = g.Name
+                    })
+                    .ToList(),
+
+                AverageRating = m.MovieRatings
+                    .Select(r => (double?)r.Value)
+                    .Average() ?? 0
+            })
+            .ToListAsync();
+
+        return(items, totalCount);
     }
 
     public async Task<Movie?> GetTrackedByIdAsync(int movieId)

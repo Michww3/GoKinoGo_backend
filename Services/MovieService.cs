@@ -25,12 +25,9 @@ public class MovieService(IUnitOfWork unitOfWork, IMapper mapper) : IMovieServic
         return movie;
     }
 
-    public async Task<(IEnumerable<MovieCardDto> Movies, int TotalCount)> GetPagedMoviesAsync(
-        int pageNumber,
-        int pageSize,
-        string? searchQuery = null)
+    public async Task<(IEnumerable<MovieCardDto> Movies, int TotalCount)> GetPagedMoviesAsync(MoviesQuery query)
     {
-        throw new NotImplementedException();
+        return await _unitOfWork.Movies.GetPagedAsync(query);
     }
 
     public async Task<MovieDto> CreateMovieAsync(CreateMovieDto dto)

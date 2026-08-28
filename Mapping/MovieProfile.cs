@@ -19,7 +19,10 @@ public class MovieProfile : Profile
                 opt.PreCondition(src => src.ReleaseDate.HasValue))
             .ForMember(x => x.Length, opt =>
                 opt.PreCondition(src => src.Length.HasValue))
+            .ForMember(x => x.Price, opt =>
+                opt.PreCondition(src => src.Price.HasValue))
             .ForAllMembers(opt =>
                 opt.Condition((src, dest, value) => value != null));
+
     }
 }
