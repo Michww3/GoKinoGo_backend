@@ -26,18 +26,35 @@ public class UsersController(IUserService userService) : BaseController
     }
 
     /// <summary>
-    /// Update user (only owner or admin)
+    /// Update user data (only owner or admin)
     /// </summary>
     [HttpPut("{id:int}")]
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<UserDto>> Update(int id, [FromBody] UpdateUserDto dto)
+    public async Task<ActionResult<UserDto>> Update(int id, [FromBody] UpdateUserDataDto dto)
     {
         var currentUser = GetCurrentUser();
         var user = await _userService.UpdateUserAsync(id, dto, currentUser);
         return Ok(user);
+    }
+
+    /// <summary>
+    /// Update user password (only owner)
+    /// </summary>
+    [HttpPut("{id:int}/password")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdatePassword(int id,[FromBody] UpdateUserPasswordDto dto)
+    {
+        var currentUser = GetCurrentUser();
+
+        await _userService.UpdatePasswordAsync(id, dto, currentUser);
+
+        return NoContent();
     }
 
     /// <summary>

@@ -30,7 +30,7 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasher
         return _mapper.Map<UserDto>(user);
     }
 
-    public async Task<UserDto> UpdateUserAsync(int userId, UpdateUserDto dto, CurrentUserDto currentUser)
+    public async Task<UserDto> UpdateUserAsync(int userId, UpdateUserDataDto dto, CurrentUserDto currentUser)
     {
         var user = await _unitOfWork.Users.GetByIdAsync(userId)
             ?? throw new NotFoundException(ErrorMessages.User.NotFound);
@@ -46,12 +46,24 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasher
 
         _mapper.Map(dto, user);
 
-        if (!string.IsNullOrWhiteSpace(dto.Password))
-            user.PasswordHash = _passwordHasher.HashPassword(dto.Password);
-
         await _unitOfWork.SaveChangesAsync();
 
         return _mapper.Map<UserDto>(user);
+    }
+
+    public async Task UpdatePasswordAsync(int userId, UpdateUserPasswordDto dto, CurrentUserDto currentUser)
+    {
+        var user = await _unitOfWork.Users.GetByIdAsync(userId)
+            ?? throw new NotFoundException(ErrorMessages.User.NotFound);
+
+        if (user.Id != currentUser.Id)
+            throw new ForbiddenException(ErrorMessages.User.CannotUpdateOtherUser);
+
+        if(!_passwordHasher.VerifyPassword(dto.CurrentPassword, user.PasswordHash))
+            throw new BadRequestException(ErrorMessages.User.IncorrectCurrentPassword);
+
+        user.PasswordHash = _passwordHasher.HashPassword(dto.NewPassword);
+        await _unitOfWork.SaveChangesAsync();
     }
 
     public async Task DeleteUserAsync(int userId, CurrentUserDto currentUser)

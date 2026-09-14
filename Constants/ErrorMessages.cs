@@ -21,6 +21,7 @@ public static class ErrorMessages
         public const string CannotUpdateOtherUser = "You do not have permission to update this user.";
         public const string CannotDeleteOtherUser = "You do not have permission to delete this user.";
         public const string Unauthorized = "You must be logged in to perform this action.";
+        public const string IncorrectCurrentPassword = "The current password is incorrect.";
     }
 
     public static class Movie

@@ -12,7 +12,7 @@ public class UserProfile : Profile
             .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
         CreateMap<CreateUserDto, User>()
             .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
-        CreateMap<UpdateUserDto, User>()
+        CreateMap<UpdateUserDataDto, User>()
             .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
             .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
     }
