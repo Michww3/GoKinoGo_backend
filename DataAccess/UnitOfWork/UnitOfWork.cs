@@ -17,5 +17,6 @@ public class UnitOfWork(AppDbContext context) : IUnitOfWork
     public IMovieCollectionRepository MovieCollections { get; } = new MovieCollectionRepository(context);
     public IMovieRatingRepository MovieRatings { get; } = new MovieRatingRepository(context);
     public ICollectionItemRepository CollectionItems { get; } = new CollectionItemRepository(context);
+    public IEmailVerificationTokenRepository EmailVerificationTokens { get; } = new EmailVerificationTokenRepository(context);
     public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();
 }

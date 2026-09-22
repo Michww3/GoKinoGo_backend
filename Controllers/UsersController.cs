@@ -33,7 +33,7 @@ public class UsersController(IUserService userService) : BaseController
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<ActionResult<UserDto>> Update(int id, [FromBody] UpdateUserDataDto dto)
+    public async Task<ActionResult<UserDto>> Update(int id, [FromBody] UpdateUserDto dto)
     {
         var currentUser = GetCurrentUser();
         var user = await _userService.UpdateUserAsync(id, dto, currentUser);

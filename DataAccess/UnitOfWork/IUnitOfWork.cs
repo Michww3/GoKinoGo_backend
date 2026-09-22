@@ -13,5 +13,6 @@ public interface IUnitOfWork
     IMovieCollectionRepository MovieCollections { get; }
     IMovieRatingRepository MovieRatings { get; }
     ICollectionItemRepository CollectionItems { get; }
+    IEmailVerificationTokenRepository EmailVerificationTokens { get; }
     Task<int> SaveChangesAsync();
 }

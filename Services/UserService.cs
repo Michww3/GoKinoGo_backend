@@ -30,7 +30,7 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasher
         return _mapper.Map<UserDto>(user);
     }
 
-    public async Task<UserDto> UpdateUserAsync(int userId, UpdateUserDataDto dto, CurrentUserDto currentUser)
+    public async Task<UserDto> UpdateUserAsync(int userId, UpdateUserDto dto, CurrentUserDto currentUser)
     {
         var user = await _unitOfWork.Users.GetByIdAsync(userId)
             ?? throw new NotFoundException(ErrorMessages.User.NotFound);
@@ -44,7 +44,12 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasher
         if (dto.UserName != null && dto.UserName != user.UserName && await _unitOfWork.Users.ExistsByUserNameAsync(dto.UserName))
             throw new ConflictException(ErrorMessages.User.UserNameExists);
 
+        var emailChanged = dto.Email != null && !string.Equals(user.Email, dto.Email, StringComparison.OrdinalIgnoreCase);
+
         _mapper.Map(dto, user);
+
+        if(emailChanged)
+            user.EmailConfirmed = false;
 
         await _unitOfWork.SaveChangesAsync();
 

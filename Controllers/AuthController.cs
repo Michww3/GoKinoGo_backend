@@ -1,7 +1,7 @@
-﻿using GoKinoGo.DTOs.Auth;
+﻿using GoKinoGo.Constants;
+using GoKinoGo.DTOs.Auth;
 using GoKinoGo.DTOs.User;
 using GoKinoGo.Entities;
-using GoKinoGo.Services;
 using GoKinoGo.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -49,6 +49,17 @@ public class AuthController(IAuthService authService) : BaseController
     {
         var result = await _authService.LoginAsync(dto);
         return Ok(result);
+    }
+
+    [HttpPost("confirm-email")]
+    public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto dto)
+    {
+        await _authService.ConfirmEmailAsync(dto.Token);
+
+        return Ok(new
+        {
+            message = Messages.EmailConfirmed
+        });
     }
 
     /// <summary>

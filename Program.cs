@@ -4,6 +4,7 @@ using GoKinoGo.DataAccess.Repositories.Interfaces;
 using GoKinoGo.DataAccess.UnitOfWork;
 using GoKinoGo.Mapping;
 using GoKinoGo.Middlewares;
+using GoKinoGo.Options;
 using GoKinoGo.Services;
 using GoKinoGo.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,6 +24,15 @@ public static partial class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
+        builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Email"));
+        builder.Services
+            .AddOptions<FrontendOptions>()
+            .Bind(builder.Configuration.GetSection("Frontend"))
+            .Validate(x => Uri.TryCreate(
+                x.BaseUrl,
+                UriKind.Absolute,
+                out _), "Frontend BaseUrl must be a valid absolute URL")
+            .ValidateOnStart();
 
         builder.Services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -73,6 +83,7 @@ public static partial class Program
         builder.Services.AddScoped<IMovieCollectionRepository, MovieCollectionRepository>();
         builder.Services.AddScoped<ICollectionItemRepository, CollectionItemRepository>();
         builder.Services.AddScoped<IMovieRatingRepository, MovieRatingRepository>();
+        builder.Services.AddScoped<IEmailVerificationTokenRepository, EmailVerificationTokenRepository>();
 
         builder.Services.AddScoped<IMovieService, MovieService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
@@ -83,6 +94,7 @@ public static partial class Program
         builder.Services.AddScoped<IMovieCollectionService, MovieCollectionService>();
         builder.Services.AddScoped<ICollectionItemService, CollectionItemService>();
         builder.Services.AddScoped<IMovieRatingService, MovieRatingService>();
+        builder.Services.AddScoped<IEmailService, EmailService>();
 
         builder.Services.AddAutoMapper(cfg =>
         {

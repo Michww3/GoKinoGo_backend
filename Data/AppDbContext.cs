@@ -128,5 +128,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<MovieCollection>()
             .HasIndex(x => x.Name)
             .IsUnique();
+
+        modelBuilder.Entity<EmailVerificationToken>()
+            .Property(x => x.TokenHash)
+            .IsRequired()
+            .HasMaxLength(64);
+
+        modelBuilder.Entity<EmailVerificationToken>()
+            .HasOne(x => x.User)
+            .WithMany(x => x.EmailVerificationTokens)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

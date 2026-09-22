@@ -1,4 +1,4 @@
-﻿namespace GoKinoGo;
+﻿namespace GoKinoGo.Options;
 
 public class JwtOptions
 {
