@@ -42,6 +42,11 @@ public class EmailVerificationService(IUnitOfWork unitOfWork, IEmailService emai
     {
         var tokens = await _unitOfWork.EmailVerificationTokens.GetByUserIdAsync(user.Id);
 
+        var latestToken = tokens.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
+
+        if (latestToken != null && latestToken.CreatedAt.AddMinutes(1) > DateTime.UtcNow)
+            throw new BadRequestException(ErrorMessages.Auth.EmailVerificationCooldown);
+
         foreach (var token in tokens)
         {
             _unitOfWork.EmailVerificationTokens.Remove(token);
@@ -81,6 +86,7 @@ public class EmailVerificationService(IUnitOfWork unitOfWork, IEmailService emai
         var verificationToken = new EmailVerificationToken
         {
             TokenHash = HashToken(token),
+            CreatedAt = DateTime.UtcNow,
             ExpiresAt = DateTime.UtcNow.AddMinutes(10),
             UserId = user.Id
         };
