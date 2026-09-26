@@ -11,4 +11,11 @@ public class EmailVerificationTokenRepository(AppDbContext context) : Repository
     {
         return await _dbSet.Include(e => e.User).FirstOrDefaultAsync(e => e.TokenHash == tokenHash);
     }
+
+    public async Task<IEnumerable<EmailVerificationToken>> GetByUserIdAsync(int userId)
+    {
+        return await _dbSet
+            .Where(x => x.UserId == userId)
+            .ToListAsync();
+    }
 }

@@ -95,6 +95,7 @@ public static partial class Program
         builder.Services.AddScoped<ICollectionItemService, CollectionItemService>();
         builder.Services.AddScoped<IMovieRatingService, MovieRatingService>();
         builder.Services.AddScoped<IEmailService, EmailService>();
+        builder.Services.AddScoped<IEmailVerificationService, EmailVerificationService>();
 
         builder.Services.AddAutoMapper(cfg =>
         {

@@ -7,24 +7,26 @@ using GoKinoGo.Entities;
 using GoKinoGo.Exceptions;
 using GoKinoGo.Options;
 using GoKinoGo.Services.Interfaces;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace GoKinoGo.Services;
 
-public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<JwtOptions> jwtOptions, IOptions<FrontendOptions> frontendOptions, IPasswordHasherService passwordHasher, IEmailService emailService) : IAuthService
+public class AuthService(IUnitOfWork unitOfWork, 
+    IMapper mapper, 
+    IOptions<JwtOptions> jwtOptions,
+    IEmailVerificationService emailVerificationService, 
+    IPasswordHasherService passwordHasher) 
+    : IAuthService
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IMapper _mapper = mapper;
     private readonly JwtOptions _jwt = jwtOptions.Value;
-    private readonly FrontendOptions _frontend = frontendOptions.Value;
+    private readonly IEmailVerificationService _emailVerificationService = emailVerificationService;
     private readonly IPasswordHasherService _passwordHasher = passwordHasher;
-    private readonly IEmailService _emailService = emailService;
 
     public async Task<AuthResponseDto> RegisterAsync(CreateUserDto dto, UserRole userRole = UserRole.User)
     {
@@ -45,21 +47,9 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<JwtOpt
         user.EmailConfirmed = false;
 
         await _unitOfWork.Users.AddAsync(user);
-
-        var token = GenerateVerificationToken();
-        var verificationToken = new EmailVerificationToken
-        {
-            TokenHash = HashToken(token),
-            ExpiresAt = DateTime.UtcNow.AddMinutes(10),
-            User = user
-        };
-
-        await _unitOfWork.EmailVerificationTokens.AddAsync(verificationToken);
-
         await _unitOfWork.SaveChangesAsync();
 
-        var verificationUrl = $"{_frontend.BaseUrl.TrimEnd('/')}/verify-email?token={token}"; 
-        await _emailService.SendEmailVerificationAsync(user.Email, user.UserName, verificationUrl);
+        await _emailVerificationService.SendVerificationEmailAsync(user);
 
         return new AuthResponseDto
         {
@@ -93,18 +83,18 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<JwtOpt
 
     public async Task ConfirmEmailAsync(string token)
     {
-        var tokenHash = HashToken(token);
+        await _emailVerificationService.ConfirmEmailAsync(token);
+    }
 
-        var verificationToken = await _unitOfWork.EmailVerificationTokens
-            .GetByTokenHashAsync(tokenHash)
-            ?? throw new BadRequestException(ErrorMessages.Auth.InvalidVerificationToken);
+    public async Task ResendConfirmationEmailAsync(int userId)
+    {
+        var user = await _unitOfWork.Users.GetByIdAsync(userId)
+            ?? throw new NotFoundException(ErrorMessages.User.NotFound);
 
-        if(verificationToken.ExpiresAt < DateTime.UtcNow)
-            throw new BadRequestException(ErrorMessages.Auth.InvalidVerificationToken);
+        if (user.EmailConfirmed)
+            throw new BadRequestException(ErrorMessages.Auth.EmailAlreadyConfirmed);
 
-        verificationToken.User.EmailConfirmed = true;
-        _unitOfWork.EmailVerificationTokens.Remove(verificationToken);
-        await _unitOfWork.SaveChangesAsync();
+        await _emailVerificationService.SendVerificationEmailAsync(user);
     }
 
     private string GenerateJwt(User user)
@@ -136,20 +126,5 @@ public class AuthService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<JwtOpt
 
         return new JwtSecurityTokenHandler()
             .WriteToken(token);
-    }
-
-    private static string GenerateVerificationToken()
-    {
-        var bytes = RandomNumberGenerator.GetBytes(32);
-
-        return WebEncoders.Base64UrlEncode(bytes);
-    }
-
-    private static string HashToken(string token)
-    {
-        var hash = SHA256.HashData(
-            Encoding.UTF8.GetBytes(token));
-
-        return Convert.ToHexString(hash);
     }
 }

@@ -62,6 +62,20 @@ public class AuthController(IAuthService authService) : BaseController
         });
     }
 
+    [Authorize]
+    [HttpPost("resend-confirmation")]
+    public async Task<IActionResult> ResendConfirmation()
+    {
+        var userId = GetCurrentUserId();
+
+        await _authService.ResendConfirmationEmailAsync(userId);
+
+        return Ok(new
+        {
+            message = Messages.EmailConfirmationResent
+        });
+    }
+
     /// <summary>
     /// Get current authorized user
     /// </summary>

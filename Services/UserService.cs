@@ -10,11 +10,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GoKinoGo.Services;
 
-public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasherService passwordHasher) : IUserService
+public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasherService passwordHasher, IEmailVerificationService emailVerificationService) : IUserService
 {
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IMapper _mapper = mapper;
     private readonly IPasswordHasherService _passwordHasher = passwordHasher;
+    private readonly IEmailVerificationService _emailVerificationService = emailVerificationService;
 
     public async Task<UserDto> GetUserByIdAsync(int userId)
     {
@@ -48,10 +49,13 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasher
 
         _mapper.Map(dto, user);
 
-        if(emailChanged)
+        if (emailChanged)
             user.EmailConfirmed = false;
 
         await _unitOfWork.SaveChangesAsync();
+
+        if (emailChanged)
+            await _emailVerificationService.SendVerificationEmailAsync(user);
 
         return _mapper.Map<UserDto>(user);
     }
@@ -64,7 +68,7 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasher
         if (user.Id != currentUser.Id)
             throw new ForbiddenException(ErrorMessages.User.CannotUpdateOtherUser);
 
-        if(!_passwordHasher.VerifyPassword(dto.CurrentPassword, user.PasswordHash))
+        if (!_passwordHasher.VerifyPassword(dto.CurrentPassword, user.PasswordHash))
             throw new BadRequestException(ErrorMessages.User.IncorrectCurrentPassword);
 
         user.PasswordHash = _passwordHasher.HashPassword(dto.NewPassword);
@@ -84,7 +88,7 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasher
         {
             await _unitOfWork.SaveChangesAsync();
         }
-        catch (DbUpdateConcurrencyException) { };
+        catch (DbUpdateConcurrencyException) { }
     }
 
     public async Task<bool> ExistsByEmailAsync(string email)

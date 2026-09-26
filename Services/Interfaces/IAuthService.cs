@@ -10,4 +10,5 @@ public interface IAuthService
     Task<AuthResponseDto> LoginAsync(LoginDto dto);
     Task<UserDto> Me(int id);
     Task ConfirmEmailAsync(string token);
+    Task ResendConfirmationEmailAsync(int userId);
 }

@@ -49,6 +49,7 @@ public static class ErrorMessages
     {
         public const string InvalidCredentials = "Invalid email or password.";
         public const string InvalidVerificationToken = "Invalid email verification token.";
+        public const string EmailAlreadyConfirmed = "Email is already confirmed.";
     }
 
     public static class MovieCollection

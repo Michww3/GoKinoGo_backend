@@ -3,4 +3,5 @@
 public static class Messages
 {
     public const string EmailConfirmed = "Email successfully confirmed.";
+    public const string EmailConfirmationResent = "Email confirmation resent.";
 }
