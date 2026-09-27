@@ -55,7 +55,17 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IPasswordHasher
         await _unitOfWork.SaveChangesAsync();
 
         if (emailChanged)
-            await _emailVerificationService.SendVerificationEmailAsync(user);
+        {
+            //TODO
+            try
+            {
+                await _emailVerificationService.SendVerificationEmailAsync(user);
+            }
+            catch(BadRequestException ex)
+            {
+                throw new BadRequestException(ErrorMessages.User.EmailConfirmationMessageCannotBeSend);
+            }
+        }
 
         return _mapper.Map<UserDto>(user);
     }

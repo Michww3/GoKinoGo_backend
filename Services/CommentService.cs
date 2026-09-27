@@ -16,6 +16,11 @@ public class CommentService(IUnitOfWork unitOfWork, IMapper mapper) : ICommentSe
 
     public async Task<CommentDto> CreateCommentAsync(int movieId, CreateCommentDto dto, int userId)
     {
+        var user = await _unitOfWork.Users.GetByIdAsync(userId)
+            ?? throw new NotFoundException(ErrorMessages.User.NotFound);
+        if(!user.EmailConfirmed)
+            throw new ForbiddenException(ErrorMessages.User.EmailNotConfirmed);
+
         _ = await _unitOfWork.Movies.GetByIdAsync(movieId)
             ?? throw new NotFoundException(ErrorMessages.Movie.NotFound);
 
