@@ -3,6 +3,7 @@ using GoKinoGo.DataAccess.Repositories.Interfaces;
 using GoKinoGo.DTOs.Genre;
 using GoKinoGo.DTOs.Movie;
 using GoKinoGo.Entities;
+using MailKit.Search;
 using Microsoft.EntityFrameworkCore;
 
 namespace GoKinoGo.DataAccess.Repositories;
@@ -177,5 +178,35 @@ public class MovieRepository(AppDbContext context) : Repository<Movie>(context),
         return await _dbSet
             .Include(m => m.Genres)
             .FirstOrDefaultAsync(m => m.Id == movieId);
+    }
+
+    public async Task<IEnumerable<MovieCardDto>> SearchMovieByNameAsync(string searchQuery, int count)
+    {
+        searchQuery = searchQuery.Trim();
+
+        return await _dbSet
+            .AsNoTracking()
+            .Where(m => m.Name.Contains(searchQuery))
+            .OrderByDescending(m => m.ReleaseDate)
+            .Take(count)
+            .Select(m => new MovieCardDto
+            {
+                Id = m.Id,
+                Name = m.Name,
+                Price = m.Price,
+                PosterUrl = m.PosterUrl,
+                ReleaseDate = m.ReleaseDate,
+                Genres = m.Genres
+                    .Select(g => new GenreDto
+                    {
+                        Id = g.Id,
+                        Name = g.Name
+                    })
+                    .ToList(),
+                AverageRating = m.MovieRatings
+                    .Select(r => (double?)r.Value)
+                    .Average() ?? 0
+            })
+            .ToListAsync();
     }
 }

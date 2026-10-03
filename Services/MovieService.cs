@@ -30,6 +30,11 @@ public class MovieService(IUnitOfWork unitOfWork, IMapper mapper) : IMovieServic
         return await _unitOfWork.Movies.GetPagedAsync(query);
     }
 
+    public async Task<IEnumerable<MovieCardDto>> SearchMovieByNameAsync(string searchQuery, int count)
+    {
+        return await _unitOfWork.Movies.SearchMovieByNameAsync(searchQuery, count);
+    }
+
     public async Task<MovieDto> CreateMovieAsync(CreateMovieDto dto)
     {
         var movie = _mapper.Map<Movie>(dto);
@@ -40,7 +45,7 @@ public class MovieService(IUnitOfWork unitOfWork, IMapper mapper) : IMovieServic
 
             var genres = (await _unitOfWork.Genres.FindAsync(g => genreIds.Contains(g.Id))).ToList();
 
-            if (genreIds.Count != genres.Count())
+            if (genreIds.Count != genres.Count)
             {
                 throw new NotFoundException(ErrorMessages.Movie.GenreNotFound);
             }

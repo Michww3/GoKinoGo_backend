@@ -9,4 +9,5 @@ public interface IMovieRepository : IRepository<Movie>
     Task<IEnumerable<MovieCardDto>> GetAllMoviesAsync();
     Task<MovieDetailsDto?> GetMovieDetailsByIdAsync(int movieId, int? userId);
     Task<(IEnumerable<MovieCardDto> Items, int TotalCount)> GetPagedAsync(MoviesQuery query);
+    Task<IEnumerable<MovieCardDto>> SearchMovieByNameAsync(string searchQuery, int count);
 }

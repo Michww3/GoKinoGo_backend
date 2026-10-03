@@ -61,6 +61,22 @@ public class MoviesController(IMovieService movieService) : BaseController
         return Ok(movie);
     }
 
+
+    /// <summary>
+    /// Search movies by name
+    /// </summary>
+    /// <param name="searchQuery"></param>
+    /// <param name="count"></param>
+    /// <returns></returns>
+    [HttpGet("search")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(IEnumerable<MovieCardDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<MovieCardDto>>> SearchByName([FromQuery] string searchQuery, [FromQuery] int count = 5)
+    {
+        var movies = await _movieService.SearchMovieByNameAsync(searchQuery, count);
+        return Ok(movies);
+    }
+
     /// <summary>
     /// Create new movie (admin only)
     /// </summary>

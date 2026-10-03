@@ -7,6 +7,7 @@ public interface IMovieService
     Task<IEnumerable<MovieCardDto>> GetAllMoviesAsync();
     Task<MovieDetailsDto> GetMovieDetailsByIdAsync(int movieId, int? userId);
     Task<(IEnumerable<MovieCardDto> Movies, int TotalCount)> GetPagedMoviesAsync(MoviesQuery query);
+    Task<IEnumerable<MovieCardDto>> SearchMovieByNameAsync(string searchQuery, int count);
     Task<MovieDto> CreateMovieAsync(CreateMovieDto dto);
     Task<MovieDto> UpdateMovieAsync(int movieId, UpdateMovieDto dto);
     Task DeleteMovieAsync(int movieId);
