@@ -209,4 +209,12 @@ public class MovieRepository(AppDbContext context) : Repository<Movie>(context),
             })
             .ToListAsync();
     }
+
+    public async Task<IEnumerable<Movie>> GetByIdsAsync(IEnumerable<int> movieIds)
+    {
+        return await _dbSet
+            .AsNoTracking()
+            .Where(m => movieIds.Contains(m.Id))
+            .ToListAsync();
+    }
 }

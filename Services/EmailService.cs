@@ -11,35 +11,17 @@ public class EmailService(IOptions<EmailOptions> options) : IEmailService
 {
     private readonly EmailOptions _options = options.Value;
 
-    public async Task SendEmailVerificationAsync(string email, string userName, string verificationUrl)
+    public async Task SendAsync(string email, string subject, string htmlBody)
     {
         var message = new MimeMessage();
 
         message.From.Add(MailboxAddress.Parse(_options.From));
-
         message.To.Add(MailboxAddress.Parse(email));
-
-        message.Subject = "Подтверждение email";
+        message.Subject = subject;
 
         message.Body = new BodyBuilder
         {
-            HtmlBody = $"""
-                <h2>Здравствуйте, {userName}!</h2>
-
-                <p>
-                    Для подтверждения email перейдите по ссылке:
-                </p>
-
-                <p>
-                    <a href="{verificationUrl}">
-                        Подтвердить email
-                    </a>
-                </p>
-
-                <p>
-                    Ссылка действительна 10 минут.
-                </p>
-                """
+            HtmlBody = htmlBody
         }.ToMessageBody();
 
         using var smtp = new SmtpClient();

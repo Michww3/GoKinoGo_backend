@@ -2,5 +2,5 @@
 
 public interface IEmailService
 {
-    Task SendEmailVerificationAsync(string email, string userName, string verificationUrl);
+    Task SendAsync(string email, string subject, string htmlBody);
 }

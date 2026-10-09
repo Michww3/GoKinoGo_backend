@@ -75,4 +75,10 @@ public static class ErrorMessages
         public const string InvalidValue = "Rating value must be between 1 and 10.";
         public const string CannotDeleteOtherRating = "You do not have permission to delete this rating.";
     }
+    public static class Cart
+    {
+        public const string MovieNotFound = "One or more items in your cart are no longer available.";
+        public const string PriceChanged = "One or more items have changed in price. Please review your cart.";
+        public const string EmptyCart = "Your cart is empty. Please add items to your cart before proceeding.";
+    }
 }

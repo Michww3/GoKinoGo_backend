@@ -58,10 +58,25 @@ public class EmailVerificationService(IUnitOfWork unitOfWork, IEmailService emai
 
         var verificationUrl = $"{_frontend.BaseUrl.TrimEnd('/')}/verify-email?token={tokenValue}";
 
-        await _emailService.SendEmailVerificationAsync(
-            user.Email,
-            user.UserName,
-            verificationUrl);
+        var htmlBody = $"""
+            <h2>Здравствуйте, {user.UserName}!</h2>
+
+            <p>
+                Для подтверждения email перейдите по ссылке:
+            </p>
+
+            <p>
+                <a href="{verificationUrl}">
+                    Подтвердить email
+                </a>
+            </p>
+
+            <p>
+                Ссылка действительна 10 минут.
+            </p>
+            """;
+
+        await _emailService.SendAsync(user.Email, "Подтверждение email", htmlBody);
     }
 
     private static string GenerateVerificationToken()
